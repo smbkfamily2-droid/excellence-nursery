@@ -176,7 +176,7 @@
   function loadPrefs(){try{return JSON.parse(localStorage.getItem(PKEY))||{}}catch(e){return {}}}
   function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify({lang:S.lang,cur:S.cur}))}catch(e){}}
 
-  var S={lang:'ar',cur:'AED',tab:'home',sub:'',biz:null,kids:[],staff:[],exp:[]};
+  var S={lang:'ar',cur:'AED',tab:'home',sub:'',biz:null,kids:[],staff:[],exp:[],payments:[]};
   var pf=loadPrefs(); if(pf.lang)S.lang=pf.lang; if(pf.cur)S.cur=pf.cur;
   try{var ql=new URLSearchParams(location.search).get('lang');if(ql==='en'||ql==='ar')S.lang=ql}catch(e){}
 
@@ -196,6 +196,7 @@
       feeMsg:function(p,k,f,c){return 'السلام عليكم '+p+'، تذكير ودي بموعد سداد رسوم '+k+' لهذا الشهر: '+f+' '+c+'. شكرًا لحضرتك.'},
       rcSend:'إرسال الفاتورة كصورة',dlImg:'تحميل الصورة',rcPrep:'جاري تجهيز الفاتورة...',rcHint:'على الموبايل: بتفتح قايمة المشاركة، اختاري واتساب. على الكمبيوتر: الصورة بتتحمّل وبتفتح محادثة ولي الأمر عشان ترفقيها.',rcClose:'إغلاق',
       rcMsg:function(p,k,f,c,n){return 'السلام عليكم '+p+'، مرفق فاتورة رسوم '+k+' بمبلغ '+f+' '+c+'. رقم الفاتورة '+n+'. شكرًا لحضرتك.'},
+      addPayment:'إضافة دفعة',kidL:'الطفل',payDateL:'تاريخ الدفع',methodL:'طريقة الدفع',methodCash:'نقدًا',methodTransfer:'تحويل بنكي',methodCard:'بطاقة',feesFromL:'من تاريخ',feesToL:'إلى تاريخ',transportFeeL:'رسوم الباص',regFeeL:'رسوم التسجيل (اختياري)',totalL:'الإجمالي',savePayment:'حفظ الدفعة وإصدار الإيصال',payHistory:'سجل المدفوعات',receiptNoShort:'إيصال رقم',
       staff:'الموظفين',staffAbs:'غياب الموظفين',absDays:'أيام الغياب هذا الشهر',
       addStaff:'إضافة موظف',staffNameP:'اسم الموظف',roleP:'الوظيفة',
       more:'المزيد',mBudget:'الميزانية والمصروفات',mBudgetS:'شهرية وسنوية',mAcc:'الحساب وكلمة المرور',mAccS:'تغيير كلمة مرور الدخول',back:'رجوع',
@@ -218,6 +219,7 @@
       feeMsg:function(p,k,f,c){return 'Hello '+p+', a friendly reminder that '+k+"'s fee for this month is due: "+f+' '+c+'. Thank you.'},
       rcSend:'Send invoice as an image',dlImg:'Download image',rcPrep:'Preparing the invoice...',rcHint:'On mobile: the share sheet opens, choose WhatsApp. On desktop: the image downloads and the parent chat opens so you can attach it.',rcClose:'Close',
       rcMsg:function(p,k,f,c,n){return 'Hello '+p+', please find attached the invoice for '+k+': '+f+' '+c+'. Invoice no. '+n+'. Thank you.'},
+      addPayment:'Add Payment',kidL:"Child's name",payDateL:'Payment date',methodL:'Payment method',methodCash:'Cash',methodTransfer:'Bank transfer',methodCard:'Card',feesFromL:'Fees from date',feesToL:'Fees to date',transportFeeL:'Transportation fee',regFeeL:'Registration fee (optional)',totalL:'Total',savePayment:'Save payment & issue receipt',payHistory:'Payment history',receiptNoShort:'Receipt No.',
       staff:'Staff',staffAbs:'Staff attendance',absDays:'Absence days this month',
       addStaff:'Add a staff member',staffNameP:'Staff name',roleP:'Role',
       more:'More',mBudget:'Budget and expenses',mBudgetS:'Monthly and yearly',mAcc:'Account & password',mAccS:'Change your login password',back:'Back',
@@ -239,6 +241,9 @@
   function money(v){return Math.round(v).toLocaleString(S.lang==='ar'?'ar-EG':'en-US')+' '+S.cur}
   function dfmt(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString(S.lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',year:'numeric'})}
   function due(k){return num(k.fee)+(k.bus?num(k.busFee):0)}
+  function paymentsForKid(kidId){return S.payments.filter(function(p){return p.kidId===kidId})}
+  function paidThisMonth(kidId){var mk=monthKey();return paymentsForKid(kidId).filter(function(p){return String(p.date).slice(0,7)===mk})[0]}
+  function payTotal(p){return num(p.fee)+num(p.busFee)+num(p.reg)}
   function wa(phone,text){return 'https://wa.me/'+String(phone).replace(/\D/g,'')+'?text='+encodeURIComponent(text)}
   function initial(o){return esc(nm(o).trim().charAt(0))}
   function catName(c){return (CATS[c]||['—','—'])[S.lang==='ar'?0:1]}
@@ -246,7 +251,8 @@
 
   function totals(){
     var mk=monthKey(),c=0,d=0,unp=0,pres=0,newN=0,newL=[];
-    S.kids.forEach(function(k){var t=due(k);d+=t;if(k.paid)c+=t;else unp++;if(k.present)pres++;if(String(k.joined).slice(0,7)===mk){newN++;newL.push(k)}});
+    S.payments.forEach(function(p){if(String(p.date).slice(0,7)===mk)c+=payTotal(p)});
+    S.kids.forEach(function(k){var t=due(k);d+=t;if(!paidThisMonth(k.id))unp++;if(k.present)pres++;if(String(k.joined).slice(0,7)===mk){newN++;newL.push(k)}});
     var ex=0;S.exp.forEach(function(e){if(String(e.date).slice(0,7)===mk)ex+=num(e.amount)});
     return {collected:c,due:d,unpaid:unp,present:pres,absent:S.kids.length-pres,newN:newN,newL:newL,exp:ex,profit:c-ex};
   }
@@ -266,7 +272,7 @@
   }
   var EXP_COLS={
     kids:[{label:'Name',get:function(k){return pick(k.name,'en')}},{label:'Class',get:function(k){return pick(k.cls,'en')}},{label:'Parent',get:function(k){return pick(k.parent,'en')}},{label:'Mother phone',get:function(k){return k.motherPhone||''}},{label:'Father phone',get:function(k){return k.fatherPhone||''}},{label:'Email',get:function(k){return k.email||''}},{label:'Area',get:function(k){return pick(k.area,'en')}},{label:'Pickup person',get:function(k){return pick(k.pickup,'en')}},{label:'Bus',get:function(k){return k.bus?'Yes':'No'}},{label:'Bus fee',get:function(k){return num(k.busFee)}},{label:'Monthly fee',get:function(k){return num(k.fee)}},{label:'Joined',get:function(k){return k.joined||''}}],
-    fees:[{label:'Name',get:function(k){return pick(k.name,'en')}},{label:'Class',get:function(k){return pick(k.cls,'en')}},{label:'Monthly fee',get:function(k){return num(k.fee)}},{label:'Bus fee',get:function(k){return k.bus?num(k.busFee):0}},{label:'Total due',get:function(k){return due(k)}},{label:'Paid',get:function(k){return k.paid?'Yes':'No'}},{label:'Paid date',get:function(k){return k.paidDate||''}},{label:'Invoice no.',get:function(k){return k.paid?invNo(k):''}}],
+    fees:[{label:'Receipt No.',get:function(p){return p.rcpt}},{label:'Date',get:function(p){return p.date}},{label:'Child',get:function(p){var k=byId(S.kids,p.kidId);return k?pick(k.name,'en'):''}},{label:'Fees period from',get:function(p){return p.from||''}},{label:'Fees period to',get:function(p){return p.to||''}},{label:'Monthly fee',get:function(p){return num(p.fee)}},{label:'Transport fee',get:function(p){return num(p.busFee)}},{label:'Registration fee',get:function(p){return num(p.reg)}},{label:'Total',get:function(p){return payTotal(p)}},{label:'Payment method',get:function(p){return p.method}}],
     staff:[{label:'Name',get:function(s){return pick(s.name,'en')}},{label:'Role',get:function(s){return pick(s.role,'en')}},{label:'Present today',get:function(s){return s.present?'Yes':'No'}},{label:'Absence days (this month)',get:function(s){return s.abs}}],
     exp:[{label:'Date',get:function(e){return e.date}},{label:'Category',get:function(e){return catNameEn(e.cat)}},{label:'Note',get:function(e){return e.note||''}},{label:'Amount',get:function(e){return num(e.amount)}}]
   };
@@ -277,7 +283,7 @@
   function doExport(type,fmt){
     var cols=EXP_COLS[type],rows,fname,title;
     if(type==='kids'){rows=S.kids;fname='excellence-nursery-children';title='Excellence Nursery - Children'}
-    else if(type==='fees'){rows=S.kids;fname='excellence-nursery-payments';title='Excellence Nursery - Payments'}
+    else if(type==='fees'){rows=S.payments;fname='excellence-nursery-payments';title='Excellence Nursery - Payments'}
     else if(type==='staff'){rows=S.staff;fname='excellence-nursery-staff';title='Excellence Nursery - Staff'}
     else{rows=S.exp;fname='excellence-nursery-expenses';title='Excellence Nursery - Expenses'}
     if(fmt==='csv')exportCSV(rows,cols,fname+'.csv');else exportPDF(rows,cols,fname+'.pdf',title);
@@ -346,42 +352,95 @@
   function renderFees(){
     var l=L(),t=totals(),h='<h2>'+l.payments+'</h2>'+
       '<div class="cards"><div class="stat good"><div class="n" style="font-size:1.2rem">'+money(t.collected)+'</div><div class="l">'+l.collected+'</div></div><div class="stat warn"><div class="n" style="font-size:1.2rem">'+money(t.due-t.collected)+'</div><div class="l">'+l.unpaid+'</div></div></div>';
+    if(S.kids.length) h+='<div class="panel"><button class="btn p full" data-act="addPayment">➕ '+l.addPayment+'</button></div>';
     if(!S.kids.length) return h+'<div class="panel"><div class="empty">'+l.noKids+'</div></div>';
     h+='<div class="panel">'+exportBtns('fees')+'</div><div class="panel">';
     S.kids.forEach(function(k){
+      var p=paidThisMonth(k.id);
       h+='<div class="item" style="flex-wrap:wrap"><div class="av">'+initial(k.name)+'</div><div class="info"><div class="nm">'+esc(nm(k.name))+'</div><div class="sm">'+money(due(k))+(k.bus?' · '+l.inclBus:'')+'</div></div>'+
-        '<span class="tag '+(k.paid?'ok':'no')+'">'+(k.paid?l.paid:l.notPaid)+'</span>'+
+        '<span class="tag '+(p?'ok':'no')+'">'+(p?l.paid:l.notPaid)+'</span>'+
         '<div class="acts" style="width:100%;padding-inline-start:50px">';
-      if(k.paid){
-        h+='<button class="btn o s" data-act="receipt" data-id="'+k.id+'">🧾 '+l.receipt+'</button>'+
-          (k.motherPhone?'<button class="btn o s" data-act="sendRc" data-who="mother" data-id="'+k.id+'">'+l.sendM+'</button>':'')+
-          (k.fatherPhone?'<button class="btn o s" data-act="sendRc" data-who="father" data-id="'+k.id+'">'+l.sendF+'</button>':'');
+      if(p){
+        h+='<button class="btn o s" data-act="receipt" data-id="'+p.id+'">🧾 '+l.receipt+'</button>'+
+          (k.motherPhone?'<button class="btn o s" data-act="sendRc" data-who="mother" data-id="'+p.id+'">'+l.sendM+'</button>':'')+
+          (k.fatherPhone?'<button class="btn o s" data-act="sendRc" data-who="father" data-id="'+p.id+'">'+l.sendF+'</button>':'');
       }else{
-        h+='<button class="btn g s" data-act="pay" data-id="'+k.id+'">'+l.markPaid+'</button>'+
+        h+='<button class="btn g s" data-act="addPayment" data-id="'+k.id+'">➕ '+l.markPaid+'</button>'+
           (k.motherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.motherPhone,l.feeMsg(nm(k.parent),nm(k.name),due(k),S.cur))+'">'+l.remindM+'</a>':'')+
           (k.fatherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.fatherPhone,l.feeMsg(nm(k.parent),nm(k.name),due(k),S.cur))+'">'+l.remindF+'</a>':'');
       }
       h+='</div></div>';
     });
+    h+='</div>';
+    h+='<div class="panel"><h3>'+l.payHistory+'</h3>';
+    if(!S.payments.length) h+='<div class="empty">—</div>';
+    S.payments.slice(0,20).forEach(function(p){
+      var k=byId(S.kids,p.kidId);
+      h+='<div class="item"><div class="av">'+(k?initial(k.name):'?')+'</div><div class="info"><div class="nm">'+esc(k?nm(k.name):'—')+'</div><div class="sm">'+dfmt(p.date)+' · '+l.receiptNoShort+' '+p.rcpt+' · '+money(payTotal(p))+'</div></div>'+
+        '<button class="x" title="'+l.del+'" aria-label="'+l.del+'" data-act="delPayment" data-id="'+p.id+'">✕</button></div>';
+    });
     return h+'</div>';
+  }
+
+  /* ================= ADD PAYMENT ================= */
+  function openAddPayment(kidId){
+    var l=L();
+    if(!S.kids.length)return;
+    var opts=S.kids.map(function(k){return '<option value="'+k.id+'"'+(k.id===kidId?' selected':'')+'>'+esc(nm(k.name))+'</option>'}).join('');
+    var now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1),last=new Date(now.getFullYear(),now.getMonth()+1,0);
+    $('#rc').innerHTML='<h3>🧾 '+l.addPayment+'</h3><form id="addPayForm" class="add">'+
+      '<div class="lbl">'+l.kidL+'</div><select name="kid" required>'+opts+'</select>'+
+      '<div class="two"><div><div class="lbl">'+l.payDateL+'</div><input type="date" name="pdate" value="'+todayIso()+'" required></div>'+
+      '<div><div class="lbl">'+l.methodL+'</div><select name="method"><option value="cash">'+l.methodCash+'</option><option value="transfer">'+l.methodTransfer+'</option><option value="card">'+l.methodCard+'</option></select></div></div>'+
+      '<div class="two"><div><div class="lbl">'+l.feesFromL+'</div><input type="date" name="ffrom" value="'+iso(first)+'"></div><div><div class="lbl">'+l.feesToL+'</div><input type="date" name="fto" value="'+iso(last)+'"></div></div>'+
+      '<div class="two"><div><div class="lbl">'+l.feeP+'</div><input type="number" min="0" name="fee"></div><div><div class="lbl">'+l.transportFeeL+'</div><input type="number" min="0" name="busFee"></div></div>'+
+      '<div class="lbl">'+l.regFeeL+'</div><input type="number" min="0" name="reg" value="0">'+
+      '<div class="sumrow"><span>'+l.totalL+'</span><span id="apTotal">0</span></div>'+
+      '<button class="btn p full" type="submit">'+l.savePayment+'</button></form>';
+    $('#modal').classList.add('on');
+    var form=$('#addPayForm');
+    function updateTotal(){var t=num(form.elements.fee.value)+num(form.elements.busFee.value)+num(form.elements.reg.value);$('#apTotal').textContent=money(t)}
+    function fillFromKid(){var k=byId(S.kids,form.elements.kid.value);if(k){form.elements.fee.value=num(k.fee);form.elements.busFee.value=k.bus?num(k.busFee):0}updateTotal()}
+    form.elements.kid.addEventListener('change',fillFromKid);
+    ['fee','busFee','reg'].forEach(function(n){form.elements[n].addEventListener('input',updateTotal)});
+    fillFromKid();
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      var kid=byId(S.kids,form.elements.kid.value);if(!kid)return;
+      var btn=form.querySelector('button[type=submit]');btn.disabled=true;
+      sb.from('payments').select('receipt_no').order('receipt_no',{ascending:false}).limit(1).then(function(r){
+        var nextNo=(r.data&&r.data[0]&&r.data[0].receipt_no)?r.data[0].receipt_no+1:1;
+        var row={kid_id:kid.id,receipt_no:nextNo,payment_date:form.elements.pdate.value,fees_from:form.elements.ffrom.value||null,fees_to:form.elements.fto.value||null,monthly_fee:num(form.elements.fee.value),transport_fee:num(form.elements.busFee.value),registration_fee:num(form.elements.reg.value),method:form.elements.method.value};
+        return sb.from('payments').insert(row).select().single().then(function(r2){
+          if(r2.error){alert(L().loadErr);btn.disabled=false;return}
+          var p=mapPayment(r2.data);S.payments.unshift(p);
+          sb.from('children').update({paid:true,paid_date:row.payment_date,receipt_no:nextNo}).eq('id',kid.id).then(function(){
+            kid.paid=true;kid.paidDate=row.payment_date;kid.rcpt=nextNo;
+            render();showReceipt(p.id);
+          });
+        });
+      });
+    });
   }
 
   /* ================= INVOICE (drawn as a single-language image) ================= */
   var lastInv=null;
   function n2(x){return (Math.round(x*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
   function d8(s){if(!s)return '';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
-  function invNo(k){return 'INV-'+monthKey().slice(0,4)+'-'+String(10000+(k.rcpt||0)).slice(1)}
+  function invNo(p){return 'INV-'+String(p.date).slice(0,4)+'-'+String(10000+(p.rcpt||0)).slice(1)}
   function pick(o,lg){return typeof o==='string'?o:((o&&(o[lg]||o.ar||o.en))||'')}
-  function invLines(k){
-    var b=S.biz,dt=(k.paidDate||todayIso()),mo=MON[new Date(dt+'T00:00:00').getMonth()],yr=dt.slice(0,4);
+  function invLines(k,p){
+    var b=S.biz,dt=p.date,mo=MON[new Date(dt+'T00:00:00').getMonth()],yr=dt.slice(0,4);
     function rt(v){return v==='ex'?'ex':num(v)}
     function mkl(gross,rate,ar,en){gross=Math.round(gross*100)/100;var net=rate==='ex'?gross:Math.round(gross/(1+rate/100)*100)/100;return {ar:ar,en:en,gross:gross,rate:rate,net:net,vat:Math.round((gross-net)*100)/100}}
-    var arr=[mkl(num(k.fee),rt(b.vatTuition),'الرسوم الشهرية - '+mo[0]+' '+yr,'Monthly tuition fee - '+mo[1]+' '+yr)];
-    if(k.bus&&num(k.busFee)>0)arr.push(mkl(num(k.busFee),rt(b.vatBus),'رسوم الباص - '+mo[0]+' '+yr,'School bus fee - '+mo[1]+' '+yr));
+    var arr=[];
+    if(num(p.fee)>0)arr.push(mkl(num(p.fee),rt(b.vatTuition),'الرسوم الشهرية - '+mo[0]+' '+yr,'Monthly tuition fee - '+mo[1]+' '+yr));
+    if(num(p.busFee)>0)arr.push(mkl(num(p.busFee),rt(b.vatBus),'رسوم الباص - '+mo[0]+' '+yr,'School bus fee - '+mo[1]+' '+yr));
+    if(num(p.reg)>0)arr.push(mkl(num(p.reg),rt(b.vatTuition),'رسوم التسجيل','Registration fee'));
     return arr;
   }
-  function drawInv(ctx,k,tax){
-    var W=1080,P=60,b=S.biz,ls=invLines(k),cur=S.cur,dt=d8(k.paidDate||todayIso());
+  function drawInv(ctx,k,p,tax){
+    var W=1080,P=60,b=S.biz,ls=invLines(k,p),cur=S.cur,dt=d8(p.date);
     var FF='Cairo,"Segoe UI",Tahoma,Arial,sans-serif',isAr=S.lang==='ar',dir=isAr?'rtl':'ltr',start=isAr?'right':'left';
     function T(s,x,y,o){o=o||{};var sz=o.s||26;ctx.font=(o.w||600)+' '+sz+'px '+FF;s=String(s);if(o.max){while(sz>15&&ctx.measureText(s).width>o.max){sz-=1;ctx.font=(o.w||600)+' '+sz+'px '+FF}while(s.length>2&&ctx.measureText(s).width>o.max){s=s.slice(0,-2)+'…'}}ctx.fillStyle=o.c||'#1d2140';ctx.textAlign=o.a||start;ctx.direction=dir;ctx.fillText(s,x,y)}
     function rr(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
@@ -389,12 +448,12 @@
     var g=ctx.createLinearGradient(0,0,W,180);g.addColorStop(0,'#151d4d');g.addColorStop(1,'#2b3a8f');ctx.fillStyle=g;ctx.fillRect(0,0,W,180);
     var hx=isAr?W-P:P;
     T(isAr?b.nameAr:b.nameEn,hx,72,{a:start,w:800,s:40,c:'#ffffff',max:760});
-    T(isAr?b.addrAr:b.addrEn,hx,112,{a:start,w:600,s:22,c:'#cbd0f5',max:760});
-    if(tax)T((isAr?'الرقم الضريبي: ':'TRN: ')+b.trn,hx,152,{a:start,w:700,s:24,c:'#ffb347',max:760});
+    T((isAr?b.addrAr:b.addrEn)||'',hx,112,{a:start,w:600,s:22,c:'#cbd0f5',max:760});
+    if(tax)T((isAr?'الرقم الضريبي: ':'TRN: ')+(b.trn||''),hx,152,{a:start,w:700,s:24,c:'#ffb347',max:760});
     var y=250;
     T(tax?(isAr?'فاتورة ضريبية':'TAX INVOICE'):(isAr?'إيصال دفع':'PAYMENT RECEIPT'),W/2,y,{a:'center',w:800,s:44,c:'#1b2559'});
     y+=70;
-    var cw=(W-2*P)/3,items=[[isAr?'رقم الفاتورة':'Invoice No.',invNo(k)],[isAr?'تاريخ الإصدار':'Date of issue',dt],[isAr?'تاريخ التوريد':'Date of supply',dt]];
+    var cw=(W-2*P)/3,items=[[isAr?'رقم الفاتورة':'Invoice No.',invNo(p)],[isAr?'تاريخ الإصدار':'Date of issue',dt],[isAr?'تاريخ التوريد':'Date of supply',dt]];
     rr(P,y,W-2*P,96,18,'#fff8f1','#eadfd2');
     items.forEach(function(it,i){var cx=P+cw*i+cw/2;T(it[0],cx,y+32,{a:'center',w:600,s:20,c:'#5d6385'});T(it[1],cx,y+70,{a:'center',w:800,s:26})});
     y+=96+24;
@@ -440,28 +499,29 @@
     rr(P,y,W-2*P,90,18,'#fde3e0','#f3b8b0');
     T(isAr?'الرسوم المدفوعة غير مستردة':'Fees paid are non-refundable',W/2,y+56,{a:'center',w:800,s:30,c:'#c0392b'});
     y+=90+30;
-    T((isAr?'للتواصل: ':'Contact: ')+b.phone,W/2,y,{a:'center',w:700,s:26});
+    T((isAr?'للتواصل: ':'Contact: ')+(b.phone||''),W/2,y,{a:'center',w:700,s:26});
     y+=56;
     T(isAr?'بدعم من SMBK Growth':'Powered by SMBK Growth',W/2,y,{a:'center',w:600,s:18,c:'#9aa0c0'});
     return y+40;
   }
-  function buildInvoice(k){
-    var tax=S.cur==='AED',n=invNo(k),l=L();
+  function buildInvoice(k,p){
+    var tax=S.cur==='AED',n=invNo(p),l=L();
     var fonts=(document.fonts&&document.fonts.load)?Promise.all(['400','600','700','800'].map(function(w){return document.fonts.load(w+' 20px Cairo')})).catch(function(){}):Promise.resolve();
     return fonts.then(function(){
       var tmp=document.createElement('canvas');tmp.width=1080;tmp.height=10;
-      var H=drawInv(tmp.getContext('2d'),k,tax);
+      var H=drawInv(tmp.getContext('2d'),k,p,tax);
       var c=document.createElement('canvas');c.width=2160;c.height=Math.ceil(H*2);
-      var ctx=c.getContext('2d');ctx.scale(2,2);drawInv(ctx,k,tax);
-      return new Promise(function(res){c.toBlob(function(bl){res({blob:bl,url:c.toDataURL('image/png'),name:n+'.png',msg:l.rcMsg(nm(k.parent),nm(k.name),due(k),S.cur,n),phone:k.fatherPhone||k.motherPhone||''})},'image/png')});
+      var ctx=c.getContext('2d');ctx.scale(2,2);drawInv(ctx,k,p,tax);
+      return new Promise(function(res){c.toBlob(function(bl){res({blob:bl,url:c.toDataURL('image/png'),name:n+'.png',msg:l.rcMsg(nm(k.parent),nm(k.name),payTotal(p),S.cur,n),phone:k.fatherPhone||k.motherPhone||''})},'image/png')});
     });
   }
-  function showReceipt(id){
-    var k=byId(S.kids,id);if(!k)return;
-    var l=L(),n=invNo(k);lastInv=null;
+  function showReceipt(paymentId){
+    var p=byId(S.payments,paymentId);if(!p)return;
+    var k=byId(S.kids,p.kidId);if(!k)return;
+    var l=L(),n=invNo(p);lastInv=null;
     $('#rc').innerHTML='<h3>🧾 '+(S.cur==='AED'?l.invTitle:l.recTitle)+'</h3><div class="rn">'+n+'</div><div id="rcimgbox" class="empty">'+l.rcPrep+'</div><div id="rcbtns"></div>';
     $('#modal').classList.add('on');
-    buildInvoice(k).then(function(r){
+    buildInvoice(k,p).then(function(r){
       if(!$('#modal').classList.contains('on')||!$('#rcimgbox'))return;
       lastInv=r;$('#rcimgbox').className='';$('#rcimgbox').innerHTML='<img alt="'+esc(n)+'" src="'+r.url+'">';
       $('#rcbtns').innerHTML='<div style="display:grid;gap:8px;margin-top:12px"><button class="btn p full" data-act="shareRc">📤 '+l.rcSend+'</button><a class="btn o full" download="'+esc(r.name)+'" href="'+r.url+'">⬇ '+l.dlImg+'</a><div class="note">'+l.rcHint+'</div><button class="btn o full" data-act="closeModal">'+l.rcClose+'</button></div>';
@@ -587,19 +647,10 @@
     if(act==='expPdf'){doExport(b.dataset.type,'pdf');return}
     if(act==='toggleKid'){var k=byId(S.kids,id);if(k){var nv=!k.present;k.present=nv;render();sb.from('children').update({present:nv}).eq('id',id).then(function(r){if(r.error){k.present=!nv;render()}})}return}
     if(act==='delKid'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.kids=S.kids.filter(function(x){return x.id!==id});render();sb.from('children').delete().eq('id',id).then(function(r){if(r.error){alert(L().loadErr);loadAll().then(render)}});return}
-    if(act==='pay'){var p=byId(S.kids,id);if(!p)return;
-      sb.from('children').select('receipt_no').not('receipt_no','is',null).order('receipt_no',{ascending:false}).limit(1).then(function(r){
-        var nextNo=(r.data&&r.data[0]&&r.data[0].receipt_no)?r.data[0].receipt_no+1:1;
-        var pd=todayIso();
-        return sb.from('children').update({paid:true,paid_date:pd,receipt_no:nextNo}).eq('id',id).then(function(r2){
-          if(r2.error){alert(L().loadErr);return}
-          p.paid=true;p.paidDate=pd;p.rcpt=nextNo;render();showReceipt(id);
-        });
-      });
-      return;
-    }
+    if(act==='addPayment'){openAddPayment(id||null);return}
+    if(act==='delPayment'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.payments=S.payments.filter(function(x){return x.id!==id});render();sb.from('payments').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
     if(act==='receipt'){showReceipt(id);return}
-    if(act==='sendRc'){var kk=byId(S.kids,id);if(kk){var target=b.dataset.who==='mother'?kk.motherPhone:kk.fatherPhone;if(target){buildInvoice(kk).then(function(r){r.phone=target;shareRecord(r)})}}return}
+    if(act==='sendRc'){var pp=byId(S.payments,id);if(pp){var kk=byId(S.kids,pp.kidId);if(kk){var target=b.dataset.who==='mother'?kk.motherPhone:kk.fatherPhone;if(target){buildInvoice(kk,pp).then(function(r){r.phone=target;shareRecord(r)})}}}return}
     if(act==='toggleStaff'){var s=byId(S.staff,id);if(s){var np=!s.present,na=Math.max(0,s.abs+(np?-1:1));s.present=np;s.abs=na;render();sb.from('staff').update({present:np,absence_days:na}).eq('id',id).then(function(r){if(r.error){loadAll().then(render)}})}return}
     if(act==='delStaff'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.staff=S.staff.filter(function(x){return x.id!==id});render();sb.from('staff').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
     if(act==='delExp'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.exp=S.exp.filter(function(x){return x.id!==id});render();sb.from('expenses').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
@@ -663,6 +714,7 @@
   function mapStaff(r){return {id:r.id,name:r.name,role:r.role,present:r.present,abs:r.absence_days}}
   function mapExp(r){return {id:r.id,date:r.date,cat:r.category,note:r.note,amount:r.amount}}
   function mapBiz(r){return {nameAr:r.name_ar,nameEn:r.name_en,trn:r.trn,addrAr:r.address_ar,addrEn:r.address_en,phone:r.phone||'',vatTuition:r.vat_tuition,vatBus:r.vat_bus}}
+  function mapPayment(r){return {id:r.id,kidId:r.kid_id,rcpt:r.receipt_no,date:r.payment_date,from:r.fees_from,to:r.fees_to,fee:r.monthly_fee,busFee:r.transport_fee,reg:r.registration_fee,method:r.method}}
   function save_noop(){}
 
   /* ================= load data from Supabase ================= */
@@ -671,14 +723,16 @@
       sb.from('biz_settings').select('*').eq('id',1).single(),
       sb.from('children').select('*').order('created_at'),
       sb.from('staff').select('*').order('created_at'),
-      sb.from('expenses').select('*').order('date',{ascending:false})
+      sb.from('expenses').select('*').order('date',{ascending:false}),
+      sb.from('payments').select('*').order('payment_date',{ascending:false})
     ]).then(function(res){
-      var bizR=res[0],kidsR=res[1],staffR=res[2],expR=res[3];
-      if(bizR.error||kidsR.error||staffR.error||expR.error){throw (bizR.error||kidsR.error||staffR.error||expR.error)}
+      var bizR=res[0],kidsR=res[1],staffR=res[2],expR=res[3],payR=res[4];
+      if(bizR.error||kidsR.error||staffR.error||expR.error||payR.error){throw (bizR.error||kidsR.error||staffR.error||expR.error||payR.error)}
       S.biz=mapBiz(bizR.data);
       S.kids=(kidsR.data||[]).map(mapKid);
       S.staff=(staffR.data||[]).map(mapStaff);
       S.exp=(expR.data||[]).map(mapExp);
+      S.payments=(payR.data||[]).map(mapPayment);
     });
   }
 
