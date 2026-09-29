@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excellence Nursery | SMBK GROWTH</title>
+<link rel="icon" type="image/svg+xml" href="../SMBK Family/assets/logo-mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root{--navy:#1b2559;--navy-2:#243074;--coral:#ff7a59;--coral-d:#e8613f;--cream:#fff8f1;--ink:#1d2140;--muted:#5d6385;--line:#e8e3dc;--green:#1c8a4b;--red:#c0392b;--amber:#b7791f;--radius:16px}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Cairo',system-ui,sans-serif;color:var(--ink);background:#d9dcee;line-height:1.6}
+  button,input,select{font:inherit}
+  .app{max-width:460px;min-height:100vh;margin:0 auto;background:var(--cream);position:relative;display:flex;flex-direction:column;box-shadow:0 0 40px #0002}
+  .top{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;padding:14px 16px}
+  .top .row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+  .brand small{display:block;font-weight:600;color:#cbd0f5;font-size:.75rem;margin-top:-4px}
+  .brand .logo{width:36px;height:36px;border-radius:10px;background:#ffffff22;display:grid;place-items:center;font-size:1.2rem}
+  .chips{display:flex;gap:6px}
+  .chip{border:1.5px solid #ffffff77;background:transparent;color:#fff;border-radius:999px;padding:2px 12px;cursor:pointer;font-weight:700;font-size:.85rem}
+  .chip:hover{background:#ffffff22}
+  select.chip{appearance:none;padding:2px 10px}
+  select.chip option{color:#000}
+  .banner{background:#ffe9a8;color:#5a4400;font-size:.82rem;text-align:center;padding:5px 10px;font-weight:600}
+  main{flex:1;padding:16px 16px 96px}
+  h2{margin:0 0 12px;font-size:1.25rem;color:var(--navy)}
+  h3{margin:0 0 8px;font-size:1.02rem;color:var(--navy)}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+  .stat .n{font-size:1.6rem;font-weight:800;color:var(--navy);line-height:1.2}
+  .stat .l{font-size:.85rem;color:var(--muted)}
+  .stat.warn .n{color:var(--red)} .stat.good .n{color:var(--green)}
+  .stat.hl{background:linear-gradient(135deg,#fff3ee,#fff);border-color:#ffcdbd;grid-column:1/-1}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+  .bar{height:12px;border-radius:99px;background:#eee7df;overflow:hidden;margin:8px 0 4px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--coral),#ffb347);width:0}
+  .item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .item:last-child{border-bottom:0}
+  .av{width:40px;height:40px;border-radius:50%;background:#ffece5;color:var(--coral-d);display:grid;place-items:center;font-weight:800;flex:none}
+  .item .info{flex:1;min-width:0}
+  .item .nm{font-weight:700}
+  .item .sm{font-size:.82rem;color:var(--muted)}
+  .tag{border-radius:99px;padding:2px 11px;font-size:.78rem;font-weight:700;white-space:nowrap}
+  .tag.ok{background:#dff5e7;color:var(--green)} .tag.no{background:#fde3e0;color:var(--red)} .tag.na{background:#eee;color:#666} .tag.wn{background:#fff0c9;color:var(--amber)}
+  .btn{border:0;border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.p{background:var(--coral);color:#fff} .btn.p:hover{background:var(--coral-d)}
+  .btn.g{background:#e6f7ee;color:var(--green)} .btn.o{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+  .btn.s{padding:5px 11px;font-size:.78rem}
+  .btn.full{width:100%;padding:12px;text-align:center}
+  .btn[disabled]{opacity:.55;pointer-events:none}
+  .acts{display:flex;gap:6px;flex-wrap:wrap}
+  .x{border:0;background:transparent;color:#b3a9a0;cursor:pointer;font-size:1.1rem;padding:4px}
+  form.add{display:grid;gap:8px}
+  form.add input,form.add select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+  form.add label.ck{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.92rem}
+  form.add label.ck input{width:auto}
+  form.add .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  form.add .busf{display:none} form.add.hasbus .busf{display:block}
+  .lbl{font-size:.8rem;color:var(--muted);margin-bottom:-4px}
+  .sumrow{display:flex;justify-content:space-between;font-weight:700;margin:5px 0}
+  .pos{color:var(--green)} .neg{color:var(--red)}
+  .note{font-size:.8rem;color:var(--muted)}
+  .empty{text-align:center;color:var(--muted);padding:18px 0}
+  nav.tabs{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:5}
+  nav.tabs button{border:0;background:transparent;padding:9px 2px 8px;color:var(--muted);cursor:pointer;font-weight:700;font-size:.74rem}
+  nav.tabs button span{display:block;font-size:1.25rem;line-height:1.1}
+  nav.tabs button.on{color:var(--coral-d)}
+  .cta{background:var(--navy);color:#fff;border-radius:var(--radius);padding:18px;text-align:center}
+  .cta p{margin:0 0 10px;color:#dfe3ff}
+  .cta a{display:inline-block;background:var(--coral);color:#fff;border-radius:999px;padding:9px 22px;font-weight:700;text-decoration:none}
+  .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .link{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.82rem}
+  .menu{display:grid;gap:10px}
+  .menu button{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:start;color:var(--ink)}
+  .menu button i{font-style:normal;font-size:1.6rem}
+  .menu button b{display:block}
+  .menu button small{color:var(--muted);display:block}
+  .back{background:none;border:0;color:var(--coral-d);font-weight:700;cursor:pointer;margin-bottom:8px;padding:0}
+  .chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:6px 0;border-bottom:1px solid var(--line)}
+  .chart .c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .chart .bars{display:flex;align-items:flex-end;gap:2px;height:100%;width:100%;justify-content:center}
+  .chart .bars i{display:block;width:38%;border-radius:4px 4px 0 0;min-height:2px}
+  .chart .bars i.in{background:var(--coral)} .chart .bars i.ex{background:#8f9ad6}
+  .chart .m{font-size:.62rem;color:var(--muted);margin-top:2px}
+  .lg{display:flex;gap:14px;font-size:.78rem;color:var(--muted);margin-top:6px}
+  .lg span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
+  .lg .a::before{background:var(--coral)} .lg .e::before{background:#8f9ad6}
+  .modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal.on{display:flex}
+  .rc{background:#fff;border-radius:20px;max-width:440px;width:100%;max-height:92vh;overflow:auto;padding:20px;position:relative}
+  .rc img{width:100%;display:block;border-radius:10px;border:1px solid var(--line)}
+  .rc h3{text-align:center;font-size:1.15rem;margin-bottom:2px}
+  .rc .rn{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:12px}
+  .expRow{display:flex;gap:8px;margin-top:10px}
+  .expRow .btn{flex:1}
+  .gate{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy-2));z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+  .gate.off{display:none}
+  .gatebox{background:#fff;border-radius:20px;padding:28px 24px;max-width:360px;width:100%}
+  .gatebox .logo{width:56px;height:56px;border-radius:14px;background:var(--navy);display:grid;place-items:center;font-size:1.8rem;margin:0 auto 14px}
+  .gatebox h2{text-align:center;margin:0 0 4px}
+  .gatebox p.sub{text-align:center;color:var(--muted);margin:0 0 20px;font-size:.9rem}
+  .gatebox input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:10px;background:#fff}
+  .gateErr{color:var(--red);font-size:.85rem;text-align:center;margin:-2px 0 10px;min-height:1.1em}
+  .spin{display:inline-block;width:16px;height:16px;border:2.5px solid #ffffff88;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="gatebox">
+    <div class="logo">🏆</div>
+    <h2 id="gTitle">Excellence Nursery</h2>
+    <p class="sub" id="gSub">تسجيل الدخول</p>
+    <form id="loginForm">
+      <input id="gUser" value="Admin" readonly aria-label="Username">
+      <input id="gPass" type="password" placeholder="كلمة المرور" autocomplete="current-password" required>
+      <div class="gateErr" id="gErr"></div>
+      <button class="btn p full" id="gBtn" type="submit">دخول</button>
+    </form>
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none">
+  <div class="top">
+    <div class="row1">
+      <div class="brand"><div class="logo">🏆</div>
+        <div><span data-ar="Excellence Nursery" data-en="Excellence Nursery">Excellence Nursery</span><small data-ar="تطبيق إدارة الحضانة" data-en="Nursery management app">تطبيق إدارة الحضانة</small></div></div>
+      <div class="chips">
+        <select class="chip" id="cur" aria-label="Currency"><option>AED</option><option>EGP</option><option>USD</option></select>
+        <button class="chip" id="lang" type="button">EN</button>
+        <button class="chip" id="logout" type="button" title="Logout">⏻</button>
+      </div>
+    </div>
+  </div>
+  <div class="banner" data-ar="تطبيق Excellence Nursery. ابدئي بإضافة أول طفل من تبويب الأطفال." data-en="Excellence Nursery's app. Start by adding your first child from the Children tab.">تطبيق Excellence Nursery.</div>
+
+  <main id="view"><div class="empty">…</div></main>
+
+  <nav class="tabs">
+    <button data-tab="home"><span>🏠</span><em style="font-style:normal" data-ar="الرئيسية" data-en="Home">الرئيسية</em></button>
+    <button data-tab="kids"><span>🧒</span><em style="font-style:normal" data-ar="الأطفال" data-en="Children">الأطفال</em></button>
+    <button data-tab="fees"><span>💳</span><em style="font-style:normal" data-ar="المدفوعات" data-en="Payments">المدفوعات</em></button>
+    <button data-tab="staff"><span>👩‍🏫</span><em style="font-style:normal" data-ar="الموظفين" data-en="Staff">الموظفين</em></button>
+    <button data-tab="more"><span>☰</span><em style="font-style:normal" data-ar="المزيد" data-en="More">المزيد</em></button>
+  </nav>
+</div>
+
+<div class="modal" id="modal"><div class="rc" id="rc"></div></div>
+
+<script>
+(function(){
+  /* ================= Supabase ================= */
+  var SUPABASE_URL='https://prwxfebsapcijjdwrzva.supabase.co';
+  var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InByd3hmZWJzYXBjaWpqZHdyenZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTYyMDYsImV4cCI6MjA4ODIzMjIwNn0.nxvbc66gdf-W16CKGN9PHUOs7C1xlHPP5Zpiu92pYkQ';
+  var ADMIN_EMAIL='admin@excellencenursery.app';
+  var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+  /* ================= date/number helpers ================= */
+  function pad(n){return (n<10?'0':'')+n}
+  function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function todayIso(){return iso(new Date())}
+  function monthKey(){return todayIso().slice(0,7)}
+  function num(v){return Math.max(0,parseFloat(v)||0)}
+
+  var HIST_IN=[0,0,0,0,0,0,0,0,0,0,0,0];
+  var HIST_EX=[0,0,0,0,0,0,0,0,0,0,0,0];
+
+  var PKEY='smbk-excellence-prefs-v1';
+  function loadPrefs(){try{return JSON.parse(localStorage.getItem(PKEY))||{}}catch(e){return {}}}
+  function savePrefs(){try{localStorage.setItem(PKEY,JSON.stringify({lang:S.lang,cur:S.cur}))}catch(e){}}
+
+  var S={lang:'ar',cur:'AED',tab:'home',sub:'',biz:null,kids:[],staff:[],exp:[]};
+  var pf=loadPrefs(); if(pf.lang)S.lang=pf.lang; if(pf.cur)S.cur=pf.cur;
+  try{var ql=new URLSearchParams(location.search).get('lang');if(ql==='en'||ql==='ar')S.lang=ql}catch(e){}
+
+  var CATS={rent:['الإيجار','Rent'],salaries:['المرتبات','Salaries'],supplies:['المستلزمات','Supplies'],transport:['المواصلات والباص','Transport & bus'],other:['أخرى','Other']};
+  var MON=[['يناير','Jan'],['فبراير','Feb'],['مارس','Mar'],['أبريل','Apr'],['مايو','May'],['يونيو','Jun'],['يوليو','Jul'],['أغسطس','Aug'],['سبتمبر','Sep'],['أكتوبر','Oct'],['نوفمبر','Nov'],['ديسمبر','Dec']];
+
+  /* ================= text dictionary ================= */
+  var T={
+    ar:{
+      today:'ملخص النهارده',children:'الأطفال',present:'حاضرين اليوم',absentToday:'غايبين اليوم',collected:'المحصّل هذا الشهر',unpaid:'لسه ما دفعوش',progress:'نسبة التحصيل',
+      newRegs:'تسجيلات جديدة هذا الشهر',joined:'اتسجّل',none:'لسه مفيش',monthProfit:'صافي ربح الشهر',
+      ctaP:'محتاجة مساعدة أو عايزة تضيفي ميزة جديدة؟ كلّمي SMBK Growth.',ctaB:'كلّمنا على واتساب',
+      addKid:'إضافة طفل',nameP:'اسم الطفل',clsP:'اسم الفصل',parentP:'اسم ولي الأمر',motherPhoneP:'رقم هاتف الأم (بكود الدولة)',fatherPhoneP:'رقم هاتف الأب (بكود الدولة)',emailP:'البريد الإلكتروني (اختياري)',areaP:'مكان السكن',pickupP:'اسم الشخص المصرّح له باستلام الطفل',feeP:'الرسوم الشهرية',busQ:'الطفل بيستخدم الباص؟',busFeeP:'رسوم الباص الشهرية',add:'إضافة',
+      presentL:'حاضر',absentL:'غايب',msgM:'👩 رسالة',msgF:'👨 رسالة',bus:'باص',noBus:'من غير باص',pickup:'المستلم',noKids:'مفيش أطفال لسه. ضيف أول طفل من فوق.',
+      absMsg:function(p,k){return 'السلام عليكم '+p+'، لاحظنا غياب '+k+' اليوم. نتمنى أن يكون بخير، ونرجو إبلاغنا لو في أي ظرف. شكرًا لحضرتك.'},
+      payments:'المدفوعات',paid:'مدفوع',notPaid:'غير مدفوع',markPaid:'تسجيل دفع',receipt:'الإيصال',remindM:'👩 تذكير',remindF:'👨 تذكير',sendM:'📤 إرسال للأم',sendF:'📤 إرسال للأب',inclBus:'شامل الباص',
+      feeMsg:function(p,k,f,c){return 'السلام عليكم '+p+'، تذكير ودي بموعد سداد رسوم '+k+' لهذا الشهر: '+f+' '+c+'. شكرًا لحضرتك.'},
+      rcSend:'إرسال الفاتورة كصورة',dlImg:'تحميل الصورة',rcPrep:'جاري تجهيز الفاتورة...',rcHint:'على الموبايل: بتفتح قايمة المشاركة، اختاري واتساب. على الكمبيوتر: الصورة بتتحمّل وبتفتح محادثة ولي الأمر عشان ترفقيها.',rcClose:'إغلاق',
+      rcMsg:function(p,k,f,c,n){return 'السلام عليكم '+p+'، مرفق فاتورة رسوم '+k+' بمبلغ '+f+' '+c+'. رقم الفاتورة '+n+'. شكرًا لحضرتك.'},
+      staff:'الموظفين',staffAbs:'غياب الموظفين',absDays:'أيام الغياب هذا الشهر',
+      addStaff:'إضافة موظف',staffNameP:'اسم الموظف',roleP:'الوظيفة',
+      more:'المزيد',mBudget:'الميزانية والمصروفات',mBudgetS:'شهرية وسنوية',mAcc:'الحساب وكلمة المرور',mAccS:'تغيير كلمة مرور الدخول',back:'رجوع',
+      budget:'الميزانية',thisMonth:'هذا الشهر',income:'الإيرادات (المحصّل)',expenses:'المصروفات',profit:'صافي الربح',margin:'هامش الربح',
+      addExp:'إضافة مصروف',amtP:'المبلغ',noteP:'ملاحظة (اختياري)',expList:'مصروفات الشهر',yearly:'الميزانية السنوية',incL:'إيرادات',expL:'مصروفات',yTotal:'إجمالي السنة حتى الآن',
+      del:'حذف',mBiz:'بيانات الحضانة والفاتورة',mBizS:'الاسم والرقم الضريبي وبيانات التواصل',bizTitle:'بيانات الحضانة والفاتورة',nameArP:'اسم الحضانة بالعربي',nameEnP:'اسم الحضانة بالإنجليزي',trnP:'الرقم الضريبي (15 رقم)',addrArP:'العنوان بالعربي',addrEnP:'العنوان بالإنجليزي',phoneBizP:'رقم التواصل (بيظهر أسفل الفاتورة)',vatTuL:'ضريبة القيمة المضافة على الرسوم الشهرية',vatBusL:'ضريبة القيمة المضافة على رسوم الباص',v0:'0% (خاضعة بنسبة صفر)',v5:'5% (النسبة الأساسية)',vEx:'معفاة من الضريبة',bizSave:'حفظ',bizSaved:'✔ اتحفظت',trnErr:'الرقم الضريبي لازم يكون 15 رقم',bizNote:'ملاحظة: النسب دي إعدادات للتوضيح. المعاملة الضريبية لرسوم الحضانة والباص بتعتمد على ترخيص حضانتك ونوع الخدمة، فراجعي مستشار ضرائب أو الهيئة الاتحادية للضرائب. الفاتورة الضريبية بالتنسيق الإماراتي بتظهر لما العملة تكون الدرهم.',
+      invTitle:'فاتورة ضريبية',recTitle:'إيصال دفع',
+      newPwP:'كلمة مرور جديدة (6 أحرف على الأقل)',confPwP:'تأكيد كلمة المرور الجديدة',changePw:'تغيير كلمة المرور',pwMismatch:'كلمتا المرور غير متطابقتين',pwShort:'لازم 6 أحرف على الأقل',pwOk:'✔ اتغيّرت كلمة المرور',pwErr:'حصل خطأ، جرّبي تاني',
+      exportCsv:'⬇ CSV',exportPdf:'⬇ PDF',loginErr:'كلمة المرور غلط',loginBtn:'دخول',loginTitle:'تسجيل الدخول',logoutConfirm:'تسجيل الخروج؟',
+      loadErr:'حصل خطأ في تحميل البيانات. تأكدي من الاتصال بالإنترنت وحاولي تاني.'
+    },
+    en:{
+      today:"Today's summary",children:'Children',present:'Present today',absentToday:'Absent today',collected:'Collected this month',unpaid:'Still unpaid',progress:'Collection rate',
+      newRegs:'New registrations this month',joined:'Joined',none:'None yet',monthProfit:'Net profit this month',
+      ctaP:'Need help or want to add a new feature? Contact SMBK Growth.',ctaB:'Chat on WhatsApp',
+      addKid:'Add a child',nameP:'Child name',clsP:'Class name',parentP:'Parent name',motherPhoneP:"Mother's phone (with country code)",fatherPhoneP:"Father's phone (with country code)",emailP:'Email (optional)',areaP:'Residence area',pickupP:'Authorized person to pick up the child',feeP:'Monthly fee',busQ:'Does the child use the bus?',busFeeP:'Monthly bus fee',add:'Add',
+      presentL:'Present',absentL:'Absent',msgM:'👩 Message',msgF:'👨 Message',bus:'Bus',noBus:'No bus',pickup:'Pickup',noKids:'No children yet. Add the first one above.',
+      absMsg:function(p,k){return 'Hello '+p+', we noticed that '+k+' is absent today. We hope all is well. Please let us know if there is anything we should be aware of. Thank you.'},
+      payments:'Payments',paid:'Paid',notPaid:'Unpaid',markPaid:'Mark paid',receipt:'Receipt',remindM:'👩 Remind',remindF:'👨 Remind',sendM:'📤 Send to Mother',sendF:'📤 Send to Father',inclBus:'incl. bus',
+      feeMsg:function(p,k,f,c){return 'Hello '+p+', a friendly reminder that '+k+"'s fee for this month is due: "+f+' '+c+'. Thank you.'},
+      rcSend:'Send invoice as an image',dlImg:'Download image',rcPrep:'Preparing the invoice...',rcHint:'On mobile: the share sheet opens, choose WhatsApp. On desktop: the image downloads and the parent chat opens so you can attach it.',rcClose:'Close',
+      rcMsg:function(p,k,f,c,n){return 'Hello '+p+', please find attached the invoice for '+k+': '+f+' '+c+'. Invoice no. '+n+'. Thank you.'},
+      staff:'Staff',staffAbs:'Staff attendance',absDays:'Absence days this month',
+      addStaff:'Add a staff member',staffNameP:'Staff name',roleP:'Role',
+      more:'More',mBudget:'Budget and expenses',mBudgetS:'Monthly and yearly',mAcc:'Account & password',mAccS:'Change your login password',back:'Back',
+      budget:'Budget',thisMonth:'This month',income:'Income (collected)',expenses:'Expenses',profit:'Net profit',margin:'Profit margin',
+      addExp:'Add an expense',amtP:'Amount',noteP:'Note (optional)',expList:"This month's expenses",yearly:'Yearly budget',incL:'Income',expL:'Expenses',yTotal:'Year to date',
+      del:'Delete',mBiz:'Nursery and invoice details',mBizS:'Name, tax number and contact details',bizTitle:'Nursery and invoice details',nameArP:'Nursery name (Arabic)',nameEnP:'Nursery name (English)',trnP:'Tax registration number (15 digits)',addrArP:'Address (Arabic)',addrEnP:'Address (English)',phoneBizP:'Contact number (shown at the bottom of the invoice)',vatTuL:'VAT on monthly tuition',vatBusL:'VAT on bus fee',v0:'0% (zero-rated)',v5:'5% (standard rate)',vEx:'Exempt from VAT',bizSave:'Save',bizSaved:'✔ Saved',trnErr:'The tax number must be 15 digits',bizNote:'Note: these rates are settings for illustration. The VAT treatment of nursery fees and bus fees depends on your nursery licence and the type of service, so check with a tax advisor or the Federal Tax Authority. The UAE tax invoice layout appears when the currency is AED.',
+      invTitle:'Tax invoice',recTitle:'Payment receipt',
+      newPwP:'New password (at least 6 characters)',confPwP:'Confirm new password',changePw:'Change password',pwMismatch:"Passwords don't match",pwShort:'Must be at least 6 characters',pwOk:'✔ Password changed',pwErr:'Something went wrong, please try again',
+      exportCsv:'⬇ CSV',exportPdf:'⬇ PDF',loginErr:'Incorrect password',loginBtn:'Log in',loginTitle:'Login',logoutConfirm:'Log out?',
+      loadErr:'Could not load your data. Check your internet connection and try again.'
+    }
+  };
+
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var view=$('#view');
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function L(){return T[S.lang]}
+  function nm(o){return typeof o==='string'?o:(o&&(o[S.lang]||o.ar||o.en))||''}
+  function money(v){return Math.round(v).toLocaleString(S.lang==='ar'?'ar-EG':'en-US')+' '+S.cur}
+  function dfmt(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString(S.lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',year:'numeric'})}
+  function due(k){return num(k.fee)+(k.bus?num(k.busFee):0)}
+  function wa(phone,text){return 'https://wa.me/'+String(phone).replace(/\D/g,'')+'?text='+encodeURIComponent(text)}
+  function initial(o){return esc(nm(o).trim().charAt(0))}
+  function catName(c){return (CATS[c]||['—','—'])[S.lang==='ar'?0:1]}
+  function byId(arr,id){return arr.filter(function(x){return x.id===id})[0]}
+
+  function totals(){
+    var mk=monthKey(),c=0,d=0,unp=0,pres=0,newN=0,newL=[];
+    S.kids.forEach(function(k){var t=due(k);d+=t;if(k.paid)c+=t;else unp++;if(k.present)pres++;if(String(k.joined).slice(0,7)===mk){newN++;newL.push(k)}});
+    var ex=0;S.exp.forEach(function(e){if(String(e.date).slice(0,7)===mk)ex+=num(e.amount)});
+    return {collected:c,due:d,unpaid:unp,present:pres,absent:S.kids.length-pres,newN:newN,newL:newL,exp:ex,profit:c-ex};
+  }
+
+  /* ================= CSV / PDF export ================= */
+  function csvCell(v){v=(v==null?'':String(v));if(/[",\r\n]/.test(v))v='"'+v.replace(/"/g,'""')+'"';return v}
+  function toCSV(rows,cols){var lines=[cols.map(function(c){return csvCell(c.label)}).join(',')];rows.forEach(function(r){lines.push(cols.map(function(c){return csvCell(c.get(r))}).join(','))});return lines.join('\r\n')}
+  function downloadBlob(content,filename,type){var blob=new Blob([content],{type:type});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}
+  function exportCSV(rows,cols,filename){downloadBlob('﻿'+toCSV(rows,cols),filename,'text/csv;charset=utf-8;')}
+  function exportPDF(rows,cols,filename,title){
+    try{
+      var doc=new window.jspdf.jsPDF();
+      doc.setFontSize(14);doc.text(title,14,16);
+      doc.autoTable({startY:22,head:[cols.map(function(c){return c.label})],body:rows.map(function(r){return cols.map(function(c){return c.get(r)})}),styles:{fontSize:9}});
+      doc.save(filename);
+    }catch(e){alert('PDF export needs an internet connection to load its library.')}
+  }
+  var EXP_COLS={
+    kids:[{label:'Name',get:function(k){return pick(k.name,'en')}},{label:'Class',get:function(k){return pick(k.cls,'en')}},{label:'Parent',get:function(k){return pick(k.parent,'en')}},{label:'Mother phone',get:function(k){return k.motherPhone||''}},{label:'Father phone',get:function(k){return k.fatherPhone||''}},{label:'Email',get:function(k){return k.email||''}},{label:'Area',get:function(k){return pick(k.area,'en')}},{label:'Pickup person',get:function(k){return pick(k.pickup,'en')}},{label:'Bus',get:function(k){return k.bus?'Yes':'No'}},{label:'Bus fee',get:function(k){return num(k.busFee)}},{label:'Monthly fee',get:function(k){return num(k.fee)}},{label:'Joined',get:function(k){return k.joined||''}}],
+    fees:[{label:'Name',get:function(k){return pick(k.name,'en')}},{label:'Class',get:function(k){return pick(k.cls,'en')}},{label:'Monthly fee',get:function(k){return num(k.fee)}},{label:'Bus fee',get:function(k){return k.bus?num(k.busFee):0}},{label:'Total due',get:function(k){return due(k)}},{label:'Paid',get:function(k){return k.paid?'Yes':'No'}},{label:'Paid date',get:function(k){return k.paidDate||''}},{label:'Invoice no.',get:function(k){return k.paid?invNo(k):''}}],
+    staff:[{label:'Name',get:function(s){return pick(s.name,'en')}},{label:'Role',get:function(s){return pick(s.role,'en')}},{label:'Present today',get:function(s){return s.present?'Yes':'No'}},{label:'Absence days (this month)',get:function(s){return s.abs}}],
+    exp:[{label:'Date',get:function(e){return e.date}},{label:'Category',get:function(e){return catNameEn(e.cat)}},{label:'Note',get:function(e){return e.note||''}},{label:'Amount',get:function(e){return num(e.amount)}}]
+  };
+  function catNameEn(c){return (CATS[c]||['—','—'])[1]}
+  function exportBtns(type,rows,titleAr,titleEn){
+    return '<div class="expRow"><button class="btn o s full" data-act="expCsv" data-type="'+type+'">'+L().exportCsv+'</button><button class="btn o s full" data-act="expPdf" data-type="'+type+'">'+L().exportPdf+'</button></div>';
+  }
+  function doExport(type,fmt){
+    var cols=EXP_COLS[type],rows,fname,title;
+    if(type==='kids'){rows=S.kids;fname='excellence-nursery-children';title='Excellence Nursery - Children'}
+    else if(type==='fees'){rows=S.kids;fname='excellence-nursery-payments';title='Excellence Nursery - Payments'}
+    else if(type==='staff'){rows=S.staff;fname='excellence-nursery-staff';title='Excellence Nursery - Staff'}
+    else{rows=S.exp;fname='excellence-nursery-expenses';title='Excellence Nursery - Expenses'}
+    if(fmt==='csv')exportCSV(rows,cols,fname+'.csv');else exportPDF(rows,cols,fname+'.pdf',title);
+  }
+
+  /* ================= HOME ================= */
+  function renderHome(){
+    var l=L(),t=totals(),pct=t.due?Math.round(t.collected/t.due*100):0;
+    var newList=t.newL.length?t.newL.map(function(k){return '<div class="item"><div class="av">'+initial(k.name)+'</div><div class="info"><div class="nm">'+esc(nm(k.name))+'</div><div class="sm">'+esc(nm(k.cls))+' · '+l.joined+' '+dfmt(k.joined)+'</div></div></div>'}).join(''):'<div class="empty">'+l.none+'</div>';
+    return '<h2>'+l.today+'</h2>'+
+    '<div class="cards">'+
+      '<div class="stat hl"><div class="n">'+t.newN+'</div><div class="l">'+l.newRegs+'</div></div>'+
+      '<div class="stat"><div class="n">'+S.kids.length+'</div><div class="l">'+l.children+'</div></div>'+
+      '<div class="stat good"><div class="n">'+t.present+'</div><div class="l">'+l.present+'</div></div>'+
+      '<div class="stat warn"><div class="n">'+t.absent+'</div><div class="l">'+l.absentToday+'</div></div>'+
+      '<div class="stat warn"><div class="n">'+t.unpaid+'</div><div class="l">'+l.unpaid+'</div></div>'+
+      '<div class="stat good"><div class="n" style="font-size:1.2rem">'+money(t.collected)+'</div><div class="l">'+l.collected+'</div></div>'+
+      '<div class="stat '+(t.profit>=0?'good':'warn')+'"><div class="n" style="font-size:1.2rem">'+money(t.profit)+'</div><div class="l">'+l.monthProfit+'</div></div>'+
+    '</div>'+
+    '<div class="panel"><h3>'+l.newRegs+'</h3>'+newList+'</div>'+
+    '<div class="panel"><div class="sumrow"><span>'+l.progress+'</span><span>'+pct+'%</span></div><div class="bar"><i style="width:'+pct+'%"></i></div><div class="note">'+money(t.collected)+' / '+money(t.due)+'</div></div>'+
+    '<div class="cta"><p>'+l.ctaP+'</p><a href="https://wa.me/19096949303?text='+encodeURIComponent('Hi, this is Excellence Nursery and I have a question about the app.')+'" target="_blank" rel="noopener">'+l.ctaB+'</a></div>'+
+    '<div class="foot"><a class="note" href="../SMBK Family/index.html" style="text-decoration:none">SMBK GROWTH</a></div>';
+  }
+
+  /* ================= KIDS ================= */
+  function renderKids(){
+    var l=L(),h='<h2>'+l.children+'</h2>'+
+    '<div class="panel"><form class="add" id="addKid"><strong>'+l.addKid+'</strong>'+
+      '<input name="name" placeholder="'+esc(l.nameP)+'" required maxlength="60">'+
+      '<input name="cls" placeholder="'+esc(l.clsP)+'" maxlength="40">'+
+      '<input name="parent" placeholder="'+esc(l.parentP)+'" required maxlength="60">'+
+      '<input name="motherPhone" placeholder="'+esc(l.motherPhoneP)+'" inputmode="tel" maxlength="20">'+
+      '<input name="fatherPhone" placeholder="'+esc(l.fatherPhoneP)+'" inputmode="tel" maxlength="20">'+
+      '<input name="email" type="email" placeholder="'+esc(l.emailP)+'" maxlength="80">'+
+      '<input name="area" placeholder="'+esc(l.areaP)+'" maxlength="60">'+
+      '<input name="pickup" placeholder="'+esc(l.pickupP)+'" maxlength="80">'+
+      '<input name="fee" type="number" min="0" placeholder="'+esc(l.feeP)+'" required>'+
+      '<label class="ck"><input type="checkbox" name="bus" id="busck"> '+l.busQ+'</label>'+
+      '<div class="busf"><input name="busFee" type="number" min="0" placeholder="'+esc(l.busFeeP)+'"></div>'+
+      '<button class="btn p full" type="submit">'+l.add+'</button></form></div>';
+    if(!S.kids.length) return h+'<div class="empty">'+l.noKids+'</div>';
+    h+='<div class="panel">'+exportBtns('kids')+'</div><div class="panel">';
+    S.kids.forEach(function(k){
+      var busTxt=k.bus?('🚌 '+l.bus+' '+money(num(k.busFee))):l.noBus;
+      var absActs='';
+      if(!k.present){
+        absActs='<div class="acts" style="margin-top:6px">'+
+          (k.motherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.motherPhone,l.absMsg(nm(k.parent),nm(k.name)))+'">'+l.msgM+'</a>':'')+
+          (k.fatherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.fatherPhone,l.absMsg(nm(k.parent),nm(k.name)))+'">'+l.msgF+'</a>':'')+
+        '</div>';
+      }
+      h+='<div class="item" style="align-items:flex-start"><div class="av">'+initial(k.name)+'</div><div class="info">'+
+        '<div class="nm">'+esc(nm(k.name))+' <span class="tag na" style="font-size:.7rem">'+esc(nm(k.cls))+'</span></div>'+
+        '<div class="sm">'+esc(nm(k.parent))+(k.area&&nm(k.area)?' · 📍'+esc(nm(k.area)):'')+(k.email?' · ✉️ '+esc(k.email):'')+'</div>'+
+        '<div class="sm">'+busTxt+(k.pickup&&nm(k.pickup)?' · 👤 '+l.pickup+': '+esc(nm(k.pickup)):'')+'</div>'+
+        absActs+
+        '</div>'+
+        '<div style="display:grid;gap:6px;justify-items:end"><button class="tag '+(k.present?'ok':'no')+'" style="border:0;cursor:pointer" data-act="toggleKid" data-id="'+k.id+'">'+(k.present?l.presentL:l.absentL)+'</button>'+
+        '<button class="x" title="'+l.del+'" aria-label="'+l.del+'" data-act="delKid" data-id="'+k.id+'">✕</button></div></div>';
+    });
+    return h+'</div>';
+  }
+
+  /* ================= FEES ================= */
+  function renderFees(){
+    var l=L(),t=totals(),h='<h2>'+l.payments+'</h2>'+
+      '<div class="cards"><div class="stat good"><div class="n" style="font-size:1.2rem">'+money(t.collected)+'</div><div class="l">'+l.collected+'</div></div><div class="stat warn"><div class="n" style="font-size:1.2rem">'+money(t.due-t.collected)+'</div><div class="l">'+l.unpaid+'</div></div></div>';
+    if(!S.kids.length) return h+'<div class="panel"><div class="empty">'+l.noKids+'</div></div>';
+    h+='<div class="panel">'+exportBtns('fees')+'</div><div class="panel">';
+    S.kids.forEach(function(k){
+      h+='<div class="item" style="flex-wrap:wrap"><div class="av">'+initial(k.name)+'</div><div class="info"><div class="nm">'+esc(nm(k.name))+'</div><div class="sm">'+money(due(k))+(k.bus?' · '+l.inclBus:'')+'</div></div>'+
+        '<span class="tag '+(k.paid?'ok':'no')+'">'+(k.paid?l.paid:l.notPaid)+'</span>'+
+        '<div class="acts" style="width:100%;padding-inline-start:50px">';
+      if(k.paid){
+        h+='<button class="btn o s" data-act="receipt" data-id="'+k.id+'">🧾 '+l.receipt+'</button>'+
+          (k.motherPhone?'<button class="btn o s" data-act="sendRc" data-who="mother" data-id="'+k.id+'">'+l.sendM+'</button>':'')+
+          (k.fatherPhone?'<button class="btn o s" data-act="sendRc" data-who="father" data-id="'+k.id+'">'+l.sendF+'</button>':'');
+      }else{
+        h+='<button class="btn g s" data-act="pay" data-id="'+k.id+'">'+l.markPaid+'</button>'+
+          (k.motherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.motherPhone,l.feeMsg(nm(k.parent),nm(k.name),due(k),S.cur))+'">'+l.remindM+'</a>':'')+
+          (k.fatherPhone?'<a class="btn o s" target="_blank" rel="noopener" href="'+wa(k.fatherPhone,l.feeMsg(nm(k.parent),nm(k.name),due(k),S.cur))+'">'+l.remindF+'</a>':'');
+      }
+      h+='</div></div>';
+    });
+    return h+'</div>';
+  }
+
+  /* ================= INVOICE (drawn as a single-language image) ================= */
+  var lastInv=null;
+  function n2(x){return (Math.round(x*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function d8(s){if(!s)return '';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+  function invNo(k){return 'INV-'+monthKey().slice(0,4)+'-'+String(10000+(k.rcpt||0)).slice(1)}
+  function pick(o,lg){return typeof o==='string'?o:((o&&(o[lg]||o.ar||o.en))||'')}
+  function invLines(k){
+    var b=S.biz,dt=(k.paidDate||todayIso()),mo=MON[new Date(dt+'T00:00:00').getMonth()],yr=dt.slice(0,4);
+    function rt(v){return v==='ex'?'ex':num(v)}
+    function mkl(gross,rate,ar,en){gross=Math.round(gross*100)/100;var net=rate==='ex'?gross:Math.round(gross/(1+rate/100)*100)/100;return {ar:ar,en:en,gross:gross,rate:rate,net:net,vat:Math.round((gross-net)*100)/100}}
+    var arr=[mkl(num(k.fee),rt(b.vatTuition),'الرسوم الشهرية - '+mo[0]+' '+yr,'Monthly tuition fee - '+mo[1]+' '+yr)];
+    if(k.bus&&num(k.busFee)>0)arr.push(mkl(num(k.busFee),rt(b.vatBus),'رسوم الباص - '+mo[0]+' '+yr,'School bus fee - '+mo[1]+' '+yr));
+    return arr;
+  }
+  function drawInv(ctx,k,tax){
+    var W=1080,P=60,b=S.biz,ls=invLines(k),cur=S.cur,dt=d8(k.paidDate||todayIso());
+    var FF='Cairo,"Segoe UI",Tahoma,Arial,sans-serif',isAr=S.lang==='ar',dir=isAr?'rtl':'ltr',start=isAr?'right':'left';
+    function T(s,x,y,o){o=o||{};var sz=o.s||26;ctx.font=(o.w||600)+' '+sz+'px '+FF;s=String(s);if(o.max){while(sz>15&&ctx.measureText(s).width>o.max){sz-=1;ctx.font=(o.w||600)+' '+sz+'px '+FF}while(s.length>2&&ctx.measureText(s).width>o.max){s=s.slice(0,-2)+'…'}}ctx.fillStyle=o.c||'#1d2140';ctx.textAlign=o.a||start;ctx.direction=dir;ctx.fillText(s,x,y)}
+    function rr(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,3200);
+    var g=ctx.createLinearGradient(0,0,W,180);g.addColorStop(0,'#151d4d');g.addColorStop(1,'#2b3a8f');ctx.fillStyle=g;ctx.fillRect(0,0,W,180);
+    var hx=isAr?W-P:P;
+    T(isAr?b.nameAr:b.nameEn,hx,72,{a:start,w:800,s:40,c:'#ffffff',max:760});
+    T(isAr?b.addrAr:b.addrEn,hx,112,{a:start,w:600,s:22,c:'#cbd0f5',max:760});
+    if(tax)T((isAr?'الرقم الضريبي: ':'TRN: ')+b.trn,hx,152,{a:start,w:700,s:24,c:'#ffb347',max:760});
+    var y=250;
+    T(tax?(isAr?'فاتورة ضريبية':'TAX INVOICE'):(isAr?'إيصال دفع':'PAYMENT RECEIPT'),W/2,y,{a:'center',w:800,s:44,c:'#1b2559'});
+    y+=70;
+    var cw=(W-2*P)/3,items=[[isAr?'رقم الفاتورة':'Invoice No.',invNo(k)],[isAr?'تاريخ الإصدار':'Date of issue',dt],[isAr?'تاريخ التوريد':'Date of supply',dt]];
+    rr(P,y,W-2*P,96,18,'#fff8f1','#eadfd2');
+    items.forEach(function(it,i){var cx=P+cw*i+cw/2;T(it[0],cx,y+32,{a:'center',w:600,s:20,c:'#5d6385'});T(it[1],cx,y+70,{a:'center',w:800,s:26})});
+    y+=96+24;
+    rr(P,y,W-2*P,140,18,'#ffffff','#eadfd2');
+    var bx0=isAr?W-P-24:P+24;
+    T(isAr?'فاتورة إلى':'Billed to',bx0,y+36,{a:start,w:700,s:22,c:'#ff7a59'});
+    T((isAr?'ولي الأمر: ':'Parent: ')+pick(k.parent,isAr?'ar':'en'),bx0,y+76,{a:start,w:700,s:27,max:900});
+    T((isAr?'الطفل: ':'Child: ')+pick(k.name,isAr?'ar':'en')+' ('+pick(k.cls,isAr?'ar':'en')+')',bx0,y+114,{a:start,w:600,s:23,c:'#5d6385',max:900});
+    y+=140+26;
+    var baseCols=tax?[380,150,110,150,230]:[750,290];
+    var headsEn=tax?['Description','Net','VAT %','VAT','Total']:['Description','Amount'];
+    var headsAr=tax?['الوصف','الصافي','النسبة','الضريبة','الإجمالي']:['الوصف','المبلغ'];
+    var order=baseCols.map(function(_,i){return i}); if(isAr)order.reverse();
+    rr(P,y,W-2*P,74,14,'#1b2559');
+    var xx=P;
+    order.forEach(function(oi){var w=baseCols[oi],cx=xx+w/2;T(isAr?headsAr[oi]:headsEn[oi],cx,y+46,{a:'center',w:700,s:22,c:'#ffffff'});xx+=w});
+    y+=74;
+    var tn=0,tv=0,tg=0;
+    ls.forEach(function(ln,ri){
+      ctx.fillStyle=ri%2?'#fdf7f1':'#ffffff';ctx.fillRect(P,y,W-2*P,90);ctx.fillStyle='#eadfd2';ctx.fillRect(P,y+89,W-2*P,1.5);
+      var vals=tax?[isAr?ln.ar:ln.en,n2(ln.net),(ln.rate==='ex'?(isAr?'معفاة':'Exempt'):ln.rate+'%'),n2(ln.vat),n2(ln.gross)]:[isAr?ln.ar:ln.en,n2(ln.gross)+' '+cur];
+      var xx2=P;
+      order.forEach(function(oi){var w=baseCols[oi],cx=xx2+w/2;T(vals[oi],cx,y+52,{a:'center',w:700,s:oi===0?23:24,max:oi===0?w-20:undefined});xx2+=w});
+      tn+=ln.net;tv+=ln.vat;tg+=ln.gross;y+=90;
+    });
+    y+=26;
+    var tbx=W-P-580;
+    if(tax){
+      T(isAr?'الإجمالي قبل الضريبة':'Total before VAT',tbx+20,y+34,{a:'left',w:600,s:22,c:'#5d6385'});
+      T(n2(tn)+' '+cur,tbx+560,y+34,{a:'right',w:700,s:25});
+      ctx.fillStyle='#eadfd2';ctx.fillRect(tbx,y+50,580,1.5);y+=56;
+      T(isAr?'قيمة الضريبة':'VAT amount',tbx+20,y+34,{a:'left',w:600,s:22,c:'#5d6385'});
+      T(n2(tv)+' '+cur,tbx+560,y+34,{a:'right',w:700,s:25});
+      ctx.fillStyle='#eadfd2';ctx.fillRect(tbx,y+50,580,1.5);y+=56;
+    }
+    rr(tbx,y+6,580,74,16,'#1b2559');
+    T(isAr?'الإجمالي المدفوع':'Total paid',tbx+22,y+52,{a:'left',w:700,s:24,c:'#ffffff'});
+    T(n2(tg)+' '+cur,tbx+560,y+53,{a:'right',w:800,s:31,c:'#ffb347'});
+    ctx.save();ctx.translate(P+150,y+8);ctx.rotate(-0.12);rr(-110,-34,220,86,14,null,'#1c8a4b');ctx.lineWidth=4;T(isAr?'مدفوعة':'PAID',0,14,{a:'center',w:800,s:38,c:'#1c8a4b'});ctx.restore();
+    y+=80+34;
+    if(tax){T(isAr?'المبالغ شاملة ضريبة القيمة المضافة إن وُجدت':'Amounts include VAT where applicable',W/2,y,{a:'center',w:600,s:20,c:'#5d6385'});y+=36}
+    y+=8;
+    rr(P,y,W-2*P,90,18,'#fde3e0','#f3b8b0');
+    T(isAr?'الرسوم المدفوعة غير مستردة':'Fees paid are non-refundable',W/2,y+56,{a:'center',w:800,s:30,c:'#c0392b'});
+    y+=90+30;
+    T((isAr?'للتواصل: ':'Contact: ')+b.phone,W/2,y,{a:'center',w:700,s:26});
+    y+=56;
+    T(isAr?'بدعم من SMBK Growth':'Powered by SMBK Growth',W/2,y,{a:'center',w:600,s:18,c:'#9aa0c0'});
+    return y+40;
+  }
+  function buildInvoice(k){
+    var tax=S.cur==='AED',n=invNo(k),l=L();
+    var fonts=(document.fonts&&document.fonts.load)?Promise.all(['400','600','700','800'].map(function(w){return document.fonts.load(w+' 20px Cairo')})).catch(function(){}):Promise.resolve();
+    return fonts.then(function(){
+      var tmp=document.createElement('canvas');tmp.width=1080;tmp.height=10;
+      var H=drawInv(tmp.getContext('2d'),k,tax);
+      var c=document.createElement('canvas');c.width=2160;c.height=Math.ceil(H*2);
+      var ctx=c.getContext('2d');ctx.scale(2,2);drawInv(ctx,k,tax);
+      return new Promise(function(res){c.toBlob(function(bl){res({blob:bl,url:c.toDataURL('image/png'),name:n+'.png',msg:l.rcMsg(nm(k.parent),nm(k.name),due(k),S.cur,n),phone:k.fatherPhone||k.motherPhone||''})},'image/png')});
+    });
+  }
+  function showReceipt(id){
+    var k=byId(S.kids,id);if(!k)return;
+    var l=L(),n=invNo(k);lastInv=null;
+    $('#rc').innerHTML='<h3>🧾 '+(S.cur==='AED'?l.invTitle:l.recTitle)+'</h3><div class="rn">'+n+'</div><div id="rcimgbox" class="empty">'+l.rcPrep+'</div><div id="rcbtns"></div>';
+    $('#modal').classList.add('on');
+    buildInvoice(k).then(function(r){
+      if(!$('#modal').classList.contains('on')||!$('#rcimgbox'))return;
+      lastInv=r;$('#rcimgbox').className='';$('#rcimgbox').innerHTML='<img alt="'+esc(n)+'" src="'+r.url+'">';
+      $('#rcbtns').innerHTML='<div style="display:grid;gap:8px;margin-top:12px"><button class="btn p full" data-act="shareRc">📤 '+l.rcSend+'</button><a class="btn o full" download="'+esc(r.name)+'" href="'+r.url+'">⬇ '+l.dlImg+'</a><div class="note">'+l.rcHint+'</div><button class="btn o full" data-act="closeModal">'+l.rcClose+'</button></div>';
+    });
+  }
+  function shareRecord(r){
+    if(!r)return;
+    try{
+      var file=new File([r.blob],r.name,{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],text:r.msg}).catch(function(){});return}
+    }catch(e){}
+    var a=document.createElement('a');a.href=r.url;a.download=r.name;document.body.appendChild(a);a.click();a.remove();
+    if(r.phone)window.open(wa(r.phone,r.msg),'_blank','noopener');
+  }
+
+  /* ================= STAFF ================= */
+  function renderStaff(){
+    var l=L(),h='<h2>'+l.staff+'</h2>'+
+    '<div class="panel"><form class="add" id="addStaff"><strong>'+l.addStaff+'</strong>'+
+      '<input name="name" placeholder="'+esc(l.staffNameP)+'" required maxlength="60">'+
+      '<input name="role" placeholder="'+esc(l.roleP)+'" maxlength="40">'+
+      '<button class="btn p full" type="submit">'+l.add+'</button></form></div>';
+    if(S.staff.length) h+='<div class="panel">'+exportBtns('staff')+'</div>';
+    h+='<div class="panel"><h3>'+l.staffAbs+'</h3>';
+    if(!S.staff.length) h+='<div class="empty">—</div>';
+    S.staff.forEach(function(s){
+      h+='<div class="item" style="align-items:flex-start"><div class="av">'+initial(s.name)+'</div><div class="info"><div class="nm">'+esc(nm(s.name))+'</div><div class="sm">'+esc(nm(s.role))+' · '+l.absDays+': '+s.abs+'</div></div>'+
+        '<div style="display:grid;gap:6px;justify-items:end"><button class="tag '+(s.present?'ok':'no')+'" style="border:0;cursor:pointer" data-act="toggleStaff" data-id="'+s.id+'">'+(s.present?l.presentL:l.absentL)+'</button>'+
+        '<button class="x" title="'+l.del+'" aria-label="'+l.del+'" data-act="delStaff" data-id="'+s.id+'">✕</button></div></div>';
+    });
+    return h+'</div>';
+  }
+
+  /* ================= MORE ================= */
+  function renderMore(){
+    var l=L();
+    if(S.sub==='budget')return renderBudget();
+    if(S.sub==='biz')return renderBiz();
+    if(S.sub==='acc')return renderAcc();
+    return '<h2>'+l.more+'</h2><div class="menu">'+
+      '<button data-act="sub" data-sub="biz"><i>🏢</i><div><b>'+l.mBiz+'</b><small>'+l.mBizS+'</small></div></button>'+
+      '<button data-act="sub" data-sub="budget"><i>📊</i><div><b>'+l.mBudget+'</b><small>'+l.mBudgetS+'</small></div></button>'+
+      '<button data-act="sub" data-sub="acc"><i>🔐</i><div><b>'+l.mAcc+'</b><small>'+l.mAccS+'</small></div></button></div>';
+  }
+  var bizMsg='',pwMsg='';
+  function renderBiz(){
+    var l=L(),b=S.biz;
+    function f(lab,name,val,extra){return '<div class="lbl">'+lab+'</div><input name="'+name+'" value="'+esc(val)+'" '+(extra||'')+'>'}
+    function sel(lab,name,val){var v=String(val);return '<div class="lbl">'+lab+'</div><select name="'+name+'"><option value="0"'+(v==='0'?' selected':'')+'>'+l.v0+'</option><option value="ex"'+(v==='ex'?' selected':'')+'>'+l.vEx+'</option><option value="5"'+(v==='5'?' selected':'')+'>'+l.v5+'</option></select>'}
+    return backBtn()+'<h2>'+l.bizTitle+'</h2><div class="panel"><form class="add" id="saveBiz">'+
+      f(l.nameArP,'nameAr',b.nameAr,'maxlength="60" required')+f(l.nameEnP,'nameEn',b.nameEn,'maxlength="60" required')+
+      f(l.trnP,'trn',b.trn,'inputmode="numeric" maxlength="24" required')+
+      f(l.addrArP,'addrAr',b.addrAr,'maxlength="80"')+f(l.addrEnP,'addrEn',b.addrEn,'maxlength="80"')+
+      f(l.phoneBizP,'phone',b.phone,'inputmode="tel" maxlength="24"')+
+      sel(l.vatTuL,'vatTuition',b.vatTuition)+sel(l.vatBusL,'vatBus',b.vatBus)+
+      (bizMsg==='err'?'<div class="tag no" style="white-space:normal">'+l.trnErr+'</div>':bizMsg==='ok'?'<div class="tag ok">'+l.bizSaved+'</div>':'')+
+      '<button class="btn p full" type="submit">'+l.bizSave+'</button></form></div><div class="note">'+l.bizNote+'</div>';
+  }
+  function renderAcc(){
+    var l=L();
+    return backBtn()+'<h2>'+l.mAcc+'</h2><div class="panel"><form class="add" id="changePwForm">'+
+      '<input name="pw1" type="password" placeholder="'+esc(l.newPwP)+'" required minlength="6" autocomplete="new-password">'+
+      '<input name="pw2" type="password" placeholder="'+esc(l.confPwP)+'" required minlength="6" autocomplete="new-password">'+
+      (pwMsg==='mismatch'?'<div class="tag no" style="white-space:normal">'+l.pwMismatch+'</div>':pwMsg==='short'?'<div class="tag no" style="white-space:normal">'+l.pwShort+'</div>':pwMsg==='ok'?'<div class="tag ok">'+l.pwOk+'</div>':pwMsg==='err'?'<div class="tag no">'+l.pwErr+'</div>':'')+
+      '<button class="btn p full" type="submit">'+l.changePw+'</button></form></div>';
+  }
+  function backBtn(){return '<button class="back" data-act="sub" data-sub="">← '+L().back+'</button>'}
+
+  function renderBudget(){
+    var l=L(),t=totals(),mk=monthKey(),ci=new Date().getMonth(),m=t.collected?Math.round(t.profit/t.collected*100):0;
+    var h=backBtn()+'<h2>'+l.mBudget+'</h2>'+
+    '<div class="panel"><h3>'+l.thisMonth+'</h3>'+
+      '<div class="sumrow"><span>'+l.income+'</span><span class="pos">'+money(t.collected)+'</span></div>'+
+      '<div class="sumrow"><span>'+l.expenses+'</span><span>'+money(t.exp)+'</span></div>'+
+      '<div class="sumrow"><span>'+l.profit+'</span><span class="'+(t.profit>=0?'pos':'neg')+'">'+money(t.profit)+'</span></div>'+
+      '<div class="sumrow"><span>'+l.margin+'</span><span>'+m+'%</span></div></div>'+
+    '<div class="panel"><form class="add" id="addExp"><strong>'+l.addExp+'</strong>'+
+      '<div class="two"><select name="cat">'+Object.keys(CATS).map(function(c){return '<option value="'+c+'">'+catName(c)+'</option>'}).join('')+'</select>'+
+      '<input name="amount" type="number" min="0" placeholder="'+esc(l.amtP)+'" required></div>'+
+      '<input name="note" placeholder="'+esc(l.noteP)+'" maxlength="60">'+
+      '<button class="btn p full" type="submit">'+l.add+'</button></form></div>'+
+    '<div class="panel"><h3>'+l.expList+'</h3>';
+    var list=S.exp.filter(function(e){return String(e.date).slice(0,7)===mk});
+    if(!list.length)h+='<div class="empty">—</div>';
+    list.forEach(function(e){h+='<div class="item"><div class="info"><div class="nm">'+catName(e.cat)+'</div><div class="sm">'+dfmt(e.date)+(e.note?' · '+esc(e.note):'')+'</div></div><b>'+money(num(e.amount))+'</b><button class="x" title="'+l.del+'" aria-label="'+l.del+'" data-act="delExp" data-id="'+e.id+'">✕</button></div>'});
+    h+='</div>';
+    if(S.exp.length) h+='<div class="panel">'+exportBtns('exp')+'</div>';
+    var inc=[],exs=[],ti=0,te=0,max=1;
+    for(var i=0;i<=ci;i++){var a=i<ci?HIST_IN[i]:t.collected,b=i<ci?HIST_EX[i]:t.exp;inc.push(a);exs.push(b);ti+=a;te+=b;max=Math.max(max,a,b)}
+    h+='<div class="panel"><h3>'+l.yearly+'</h3><div class="chart">';
+    for(i=0;i<=ci;i++){h+='<div class="c"><div class="bars"><i class="in" style="height:'+Math.round(inc[i]/max*100)+'%"></i><i class="ex" style="height:'+Math.round(exs[i]/max*100)+'%"></i></div><div class="m">'+MON[i][S.lang==='ar'?0:1].slice(0,3)+'</div></div>'}
+    h+='</div><div class="lg"><span class="a">'+l.incL+'</span><span class="e">'+l.expL+'</span></div>'+
+      '<div style="margin-top:10px"><div class="sumrow"><span>'+l.yTotal+' · '+l.incL+'</span><span class="pos">'+money(ti)+'</span></div><div class="sumrow"><span>'+l.expL+'</span><span>'+money(te)+'</span></div><div class="sumrow"><span>'+l.profit+'</span><span class="'+(ti-te>=0?'pos':'neg')+'">'+money(ti-te)+'</span></div></div></div>';
+    return h;
+  }
+
+  /* ================= render ================= */
+  var keep=true;
+  function snapshot(){var s={};view.querySelectorAll('form.add').forEach(function(f){if(!f.id)return;var o={};[].forEach.call(f.elements,function(el){if(!el.name)return;o[el.name]=el.type==='checkbox'?el.checked:el.value});s[f.id]=o});return s}
+  function restore(s){Object.keys(s).forEach(function(id){var f=view.querySelector('#'+id);if(!f)return;var o=s[id];[].forEach.call(f.elements,function(el){if(el.name&&(el.name in o)){if(el.type==='checkbox')el.checked=o[el.name];else el.value=o[el.name]}});if(f.elements.bus&&f.elements.bus.checked)f.classList.add('hasbus')})}
+  function render(){
+    var snap=keep?snapshot():{};keep=true;
+    document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
+    $('#lang').textContent=S.lang==='ar'?'EN':'عربي';$('#cur').value=S.cur;
+    document.querySelectorAll('[data-ar]').forEach(function(el){el.textContent=el.getAttribute('data-'+S.lang)});
+    document.title='Excellence Nursery | SMBK GROWTH';
+    document.querySelectorAll('nav.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===S.tab)});
+    view.innerHTML=({home:renderHome,kids:renderKids,fees:renderFees,staff:renderStaff,more:renderMore})[S.tab]();
+    restore(snap);
+    view.querySelectorAll('input[placeholder]').forEach(function(i){i.setAttribute('aria-label',i.placeholder)});
+  }
+
+  document.querySelectorAll('nav.tabs button').forEach(function(b){b.addEventListener('click',function(){S.tab=b.dataset.tab;if(S.tab!=='more')S.sub='';bizMsg='';pwMsg='';render();window.scrollTo(0,0)})});
+  $('#lang').addEventListener('click',function(){S.lang=S.lang==='ar'?'en':'ar';savePrefs();$('#modal').classList.remove('on');render()});
+  $('#cur').addEventListener('change',function(e){S.cur=e.target.value;savePrefs();render()});
+  $('#modal').addEventListener('click',function(e){if(e.target.closest('[data-act=shareRc]')){shareRecord(lastInv);return}if(e.target.id==='modal'||e.target.closest('[data-act=closeModal]'))$('#modal').classList.remove('on')});
+
+  view.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]');if(!b)return;
+    var act=b.dataset.act,id=b.dataset.id;
+    if(act==='sub'){S.sub=b.dataset.sub||'';bizMsg='';pwMsg='';render();window.scrollTo(0,0);return}
+    if(act==='expCsv'){doExport(b.dataset.type,'csv');return}
+    if(act==='expPdf'){doExport(b.dataset.type,'pdf');return}
+    if(act==='toggleKid'){var k=byId(S.kids,id);if(k){var nv=!k.present;k.present=nv;render();sb.from('children').update({present:nv}).eq('id',id).then(function(r){if(r.error){k.present=!nv;render()}})}return}
+    if(act==='delKid'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.kids=S.kids.filter(function(x){return x.id!==id});render();sb.from('children').delete().eq('id',id).then(function(r){if(r.error){alert(L().loadErr);loadAll().then(render)}});return}
+    if(act==='pay'){var p=byId(S.kids,id);if(!p)return;
+      sb.from('children').select('receipt_no').not('receipt_no','is',null).order('receipt_no',{ascending:false}).limit(1).then(function(r){
+        var nextNo=(r.data&&r.data[0]&&r.data[0].receipt_no)?r.data[0].receipt_no+1:1;
+        var pd=todayIso();
+        return sb.from('children').update({paid:true,paid_date:pd,receipt_no:nextNo}).eq('id',id).then(function(r2){
+          if(r2.error){alert(L().loadErr);return}
+          p.paid=true;p.paidDate=pd;p.rcpt=nextNo;render();showReceipt(id);
+        });
+      });
+      return;
+    }
+    if(act==='receipt'){showReceipt(id);return}
+    if(act==='sendRc'){var kk=byId(S.kids,id);if(kk){var target=b.dataset.who==='mother'?kk.motherPhone:kk.fatherPhone;if(target){buildInvoice(kk).then(function(r){r.phone=target;shareRecord(r)})}}return}
+    if(act==='toggleStaff'){var s=byId(S.staff,id);if(s){var np=!s.present,na=Math.max(0,s.abs+(np?-1:1));s.present=np;s.abs=na;render();sb.from('staff').update({present:np,absence_days:na}).eq('id',id).then(function(r){if(r.error){loadAll().then(render)}})}return}
+    if(act==='delStaff'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.staff=S.staff.filter(function(x){return x.id!==id});render();sb.from('staff').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
+    if(act==='delExp'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.exp=S.exp.filter(function(x){return x.id!==id});render();sb.from('expenses').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
+  });
+  view.addEventListener('change',function(e){
+    if(e.target.id==='busck'){e.target.closest('form').classList.toggle('hasbus',e.target.checked)}
+  });
+  view.addEventListener('submit',function(e){
+    e.preventDefault();keep=false;var f=e.target,d=function(n){return f.elements[n]?f.elements[n].value.trim():''};
+    if(f.id==='addKid'){
+      var bus=f.elements.bus.checked,busFee=bus?num(d('busFee')):0;
+      var row={name:d('name'),class:d('cls'),parent_name:d('parent'),mother_phone:d('motherPhone'),father_phone:d('fatherPhone'),email:d('email'),area:d('area'),pickup_person:d('pickup'),fee:num(d('fee')),bus:bus,bus_fee:busFee,paid:false,present:true,joined_at:todayIso()};
+      sb.from('children').insert(row).select().single().then(function(r){
+        if(r.error){alert(L().loadErr);return}
+        S.kids.push(mapKid(r.data));save_noop();render();
+      });
+      return;
+    }
+    if(f.id==='addStaff'){
+      var srow={name:d('name'),role:d('role'),present:true,absence_days:0};
+      sb.from('staff').insert(srow).select().single().then(function(r){
+        if(r.error){alert(L().loadErr);return}
+        S.staff.push(mapStaff(r.data));render();
+      });
+      return;
+    }
+    if(f.id==='addExp'){
+      var erow={date:todayIso(),category:f.elements.cat.value,note:d('note'),amount:num(d('amount'))};
+      sb.from('expenses').insert(erow).select().single().then(function(r){
+        if(r.error){alert(L().loadErr);return}
+        S.exp.push(mapExp(r.data));render();
+      });
+      return;
+    }
+    if(f.id==='saveBiz'){
+      var trn=d('trn').replace(/\D/g,'');
+      if(trn.length!==15){bizMsg='err';keep=true;render();return}
+      var upd={name_ar:d('nameAr')||S.biz.nameAr,name_en:d('nameEn')||S.biz.nameEn,trn:trn,address_ar:d('addrAr'),address_en:d('addrEn'),phone:d('phone'),vat_tuition:f.elements.vatTuition.value,vat_bus:f.elements.vatBus.value};
+      sb.from('biz_settings').update(upd).eq('id',1).then(function(r){
+        if(r.error){bizMsg='err';render();return}
+        S.biz=mapBiz(Object.assign({},S.biz,{name_ar:upd.name_ar,name_en:upd.name_en,trn:upd.trn,address_ar:upd.address_ar,address_en:upd.address_en,phone:upd.phone,vat_tuition:upd.vat_tuition,vat_bus:upd.vat_bus}));
+        bizMsg='ok';keep=true;render();
+      });
+      return;
+    }
+    if(f.id==='changePwForm'){
+      var p1=f.elements.pw1.value,p2=f.elements.pw2.value;
+      if(p1.length<6){pwMsg='short';keep=true;render();return}
+      if(p1!==p2){pwMsg='mismatch';keep=true;render();return}
+      var btn=f.querySelector('button[type=submit]');btn.disabled=true;
+      sb.auth.updateUser({password:p1}).then(function(r){
+        btn.disabled=false;
+        pwMsg=r.error?'err':'ok';keep=true;render();
+      });
+      return;
+    }
+  });
+
+  /* ================= mapping DB rows <-> app objects ================= */
+  function mapKid(r){return {id:r.id,name:r.name,cls:r.class,parent:r.parent_name,motherPhone:r.mother_phone,fatherPhone:r.father_phone,email:r.email,area:r.area,pickup:r.pickup_person,fee:r.fee,bus:r.bus,busFee:r.bus_fee,paid:r.paid,paidDate:r.paid_date,rcpt:r.receipt_no,present:r.present,joined:r.joined_at}}
+  function mapStaff(r){return {id:r.id,name:r.name,role:r.role,present:r.present,abs:r.absence_days}}
+  function mapExp(r){return {id:r.id,date:r.date,cat:r.category,note:r.note,amount:r.amount}}
+  function mapBiz(r){return {nameAr:r.name_ar,nameEn:r.name_en,trn:r.trn,addrAr:r.address_ar,addrEn:r.address_en,phone:r.phone||'',vatTuition:r.vat_tuition,vatBus:r.vat_bus}}
+  function save_noop(){}
+
+  /* ================= load data from Supabase ================= */
+  function loadAll(){
+    return Promise.all([
+      sb.from('biz_settings').select('*').eq('id',1).single(),
+      sb.from('children').select('*').order('created_at'),
+      sb.from('staff').select('*').order('created_at'),
+      sb.from('expenses').select('*').order('date',{ascending:false})
+    ]).then(function(res){
+      var bizR=res[0],kidsR=res[1],staffR=res[2],expR=res[3];
+      if(bizR.error||kidsR.error||staffR.error||expR.error){throw (bizR.error||kidsR.error||staffR.error||expR.error)}
+      S.biz=mapBiz(bizR.data);
+      S.kids=(kidsR.data||[]).map(mapKid);
+      S.staff=(staffR.data||[]).map(mapStaff);
+      S.exp=(expR.data||[]).map(mapExp);
+    });
+  }
+
+  /* ================= auth gate ================= */
+  var gate=$('#gate'),appRoot=$('#appRoot'),loginForm=$('#loginForm'),gErr=$('#gErr'),gBtn=$('#gBtn'),gPass=$('#gPass');
+  function setGateLang(){
+    var l=L();
+    $('#gSub').textContent=l.loginTitle;
+    gBtn.textContent=l.loginBtn;
+    gPass.placeholder=S.lang==='ar'?'كلمة المرور':'Password';
+    document.getElementById('gate').dir=S.lang==='ar'?'rtl':'ltr';
+  }
+  function showApp(){gate.classList.add('off');appRoot.style.display='';render()}
+  function showGate(){appRoot.style.display='none';gate.classList.remove('off');setGateLang();gPass.value='';gErr.textContent='';gBtn.disabled=false}
+
+  loginForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    gErr.textContent='';gBtn.disabled=true;gBtn.innerHTML='<span class="spin"></span>';
+    sb.auth.signInWithPassword({email:ADMIN_EMAIL,password:gPass.value}).then(function(r){
+      if(r.error){gErr.textContent=L().loginErr;gBtn.disabled=false;gBtn.textContent=L().loginBtn;return}
+      loadAll().then(showApp).catch(function(){gErr.textContent=L().loadErr;gBtn.disabled=false;gBtn.textContent=L().loginBtn});
+    });
+  });
+  $('#logout').addEventListener('click',function(){
+    if(!confirm(L().logoutConfirm))return;
+    sb.auth.signOut().then(function(){showGate()});
+  });
+
+  setGateLang();
+  sb.auth.getSession().then(function(r){
+    var session=r.data&&r.data.session;
+    if(session){ loadAll().then(showApp).catch(function(){showGate();gErr.textContent=L().loadErr}); }
+    else{ showGate(); }
+  });
+})();
+</script>
+</body>
+</html>
