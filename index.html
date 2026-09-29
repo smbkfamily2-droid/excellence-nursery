@@ -180,7 +180,7 @@
   var pf=loadPrefs(); if(pf.lang)S.lang=pf.lang; if(pf.cur)S.cur=pf.cur;
   try{var ql=new URLSearchParams(location.search).get('lang');if(ql==='en'||ql==='ar')S.lang=ql}catch(e){}
 
-  var CATS={rent:['الإيجار','Rent'],salaries:['المرتبات','Salaries'],supplies:['المستلزمات','Supplies'],transport:['المواصلات والباص','Transport & bus'],other:['أخرى','Other']};
+  var CATS={rent:['الإيجار','Rent'],salaries:['المرتبات','Staff salaries'],supplies:['المستلزمات','Purchases & supplies'],transport:['المواصلات والباص','Bus expenses'],maintenance:['الصيانة','Maintenance'],utilities:['المرافق','Utilities'],communications:['الاتصالات','Communications'],govFees:['رسوم حكومية','Government fees'],bank:['رسوم بنكية','Bank charges'],advertising:['إعلانات','Advertising'],licenses:['رسوم التراخيص','License fees'],other:['أخرى','Other']};
   var MON=[['يناير','Jan'],['فبراير','Feb'],['مارس','Mar'],['أبريل','Apr'],['مايو','May'],['يونيو','Jun'],['يوليو','Jul'],['أغسطس','Aug'],['سبتمبر','Sep'],['أكتوبر','Oct'],['نوفمبر','Nov'],['ديسمبر','Dec']];
 
   /* ================= text dictionary ================= */
@@ -196,12 +196,12 @@
       feeMsg:function(p,k,f,c){return 'السلام عليكم '+p+'، تذكير ودي بموعد سداد رسوم '+k+' لهذا الشهر: '+f+' '+c+'. شكرًا لحضرتك.'},
       rcSend:'إرسال الفاتورة كصورة',dlImg:'تحميل الصورة',rcPrep:'جاري تجهيز الفاتورة...',rcHint:'على الموبايل: بتفتح قايمة المشاركة، اختاري واتساب. على الكمبيوتر: الصورة بتتحمّل وبتفتح محادثة ولي الأمر عشان ترفقيها.',rcClose:'إغلاق',
       rcMsg:function(p,k,f,c,n){return 'السلام عليكم '+p+'، مرفق فاتورة رسوم '+k+' بمبلغ '+f+' '+c+'. رقم الفاتورة '+n+'. شكرًا لحضرتك.'},
-      addPayment:'إضافة دفعة',kidL:'الطفل',payDateL:'تاريخ الدفع',methodL:'طريقة الدفع',methodCash:'نقدًا',methodTransfer:'تحويل بنكي',methodCard:'بطاقة',feesFromL:'من تاريخ',feesToL:'إلى تاريخ',transportFeeL:'رسوم الباص',regFeeL:'رسوم التسجيل (اختياري)',totalL:'الإجمالي',savePayment:'حفظ الدفعة وإصدار الإيصال',payHistory:'سجل المدفوعات',receiptNoShort:'إيصال رقم',
+      addPayment:'إضافة دفعة',kidL:'الطفل',payDateL:'تاريخ الدفع',methodL:'طريقة الدفع',methodCash:'نقدًا',methodTransfer:'تحويل بنكي',methodCard:'بطاقة',feesFromL:'من تاريخ',feesToL:'إلى تاريخ',transportFeeL:'رسوم الباص',regFeeL:'رسوم التسجيل (اختياري)',totalL:'الإجمالي',savePayment:'حفظ الدفعة وإصدار الإيصال',payHistory:'سجل المدفوعات',receiptNoShort:'إيصال رقم',cancelledL:'ملغاة',restoreL:'↩️ استرجاع',cancelL:'إلغاء',cancelPrompt:'سبب الإلغاء (اختياري):',
       staff:'الموظفين',staffAbs:'غياب الموظفين',absDays:'أيام الغياب هذا الشهر',
       addStaff:'إضافة موظف',staffNameP:'اسم الموظف',roleP:'الوظيفة',
       more:'المزيد',mBudget:'الميزانية والمصروفات',mBudgetS:'شهرية وسنوية',mAcc:'الحساب وكلمة المرور',mAccS:'تغيير كلمة مرور الدخول',back:'رجوع',
       budget:'الميزانية',thisMonth:'هذا الشهر',income:'الإيرادات (المحصّل)',expenses:'المصروفات',profit:'صافي الربح',margin:'هامش الربح',
-      addExp:'إضافة مصروف',amtP:'المبلغ',noteP:'ملاحظة (اختياري)',expList:'مصروفات الشهر',yearly:'الميزانية السنوية',incL:'إيرادات',expL:'مصروفات',yTotal:'إجمالي السنة حتى الآن',
+      addExp:'إضافة مصروف',amtP:'المبلغ',noteP:'ملاحظة (اختياري)',expList:'مصروفات الشهر',yearly:'الميزانية السنوية',incL:'إيرادات',expL:'مصروفات',yTotal:'إجمالي السنة حتى الآن',vatNo:'بدون ضريبة',vatYes:'ضريبة 5%',
       del:'حذف',mBiz:'بيانات الحضانة والفاتورة',mBizS:'الاسم والرقم الضريبي وبيانات التواصل',bizTitle:'بيانات الحضانة والفاتورة',nameArP:'اسم الحضانة بالعربي',nameEnP:'اسم الحضانة بالإنجليزي',trnP:'الرقم الضريبي (15 رقم)',addrArP:'العنوان بالعربي',addrEnP:'العنوان بالإنجليزي',phoneBizP:'رقم التواصل (بيظهر أسفل الفاتورة)',vatTuL:'ضريبة القيمة المضافة على الرسوم الشهرية',vatBusL:'ضريبة القيمة المضافة على رسوم الباص',v0:'0% (خاضعة بنسبة صفر)',v5:'5% (النسبة الأساسية)',vEx:'معفاة من الضريبة',bizSave:'حفظ',bizSaved:'✔ اتحفظت',trnErr:'الرقم الضريبي لازم يكون 15 رقم',bizNote:'ملاحظة: النسب دي إعدادات للتوضيح. المعاملة الضريبية لرسوم الحضانة والباص بتعتمد على ترخيص حضانتك ونوع الخدمة، فراجعي مستشار ضرائب أو الهيئة الاتحادية للضرائب. الفاتورة الضريبية بالتنسيق الإماراتي بتظهر لما العملة تكون الدرهم.',
       invTitle:'فاتورة ضريبية',recTitle:'إيصال دفع',
       newPwP:'كلمة مرور جديدة (6 أحرف على الأقل)',confPwP:'تأكيد كلمة المرور الجديدة',changePw:'تغيير كلمة المرور',pwMismatch:'كلمتا المرور غير متطابقتين',pwShort:'لازم 6 أحرف على الأقل',pwOk:'✔ اتغيّرت كلمة المرور',pwErr:'حصل خطأ، جرّبي تاني',
@@ -219,12 +219,12 @@
       feeMsg:function(p,k,f,c){return 'Hello '+p+', a friendly reminder that '+k+"'s fee for this month is due: "+f+' '+c+'. Thank you.'},
       rcSend:'Send invoice as an image',dlImg:'Download image',rcPrep:'Preparing the invoice...',rcHint:'On mobile: the share sheet opens, choose WhatsApp. On desktop: the image downloads and the parent chat opens so you can attach it.',rcClose:'Close',
       rcMsg:function(p,k,f,c,n){return 'Hello '+p+', please find attached the invoice for '+k+': '+f+' '+c+'. Invoice no. '+n+'. Thank you.'},
-      addPayment:'Add Payment',kidL:"Child's name",payDateL:'Payment date',methodL:'Payment method',methodCash:'Cash',methodTransfer:'Bank transfer',methodCard:'Card',feesFromL:'Fees from date',feesToL:'Fees to date',transportFeeL:'Transportation fee',regFeeL:'Registration fee (optional)',totalL:'Total',savePayment:'Save payment & issue receipt',payHistory:'Payment history',receiptNoShort:'Receipt No.',
+      addPayment:'Add Payment',kidL:"Child's name",payDateL:'Payment date',methodL:'Payment method',methodCash:'Cash',methodTransfer:'Bank transfer',methodCard:'Card',feesFromL:'Fees from date',feesToL:'Fees to date',transportFeeL:'Transportation fee',regFeeL:'Registration fee (optional)',totalL:'Total',savePayment:'Save payment & issue receipt',payHistory:'Payment history',receiptNoShort:'Receipt No.',cancelledL:'Cancelled',restoreL:'↩️ Restore',cancelL:'Cancel',cancelPrompt:'Cancellation reason (optional):',
       staff:'Staff',staffAbs:'Staff attendance',absDays:'Absence days this month',
       addStaff:'Add a staff member',staffNameP:'Staff name',roleP:'Role',
       more:'More',mBudget:'Budget and expenses',mBudgetS:'Monthly and yearly',mAcc:'Account & password',mAccS:'Change your login password',back:'Back',
       budget:'Budget',thisMonth:'This month',income:'Income (collected)',expenses:'Expenses',profit:'Net profit',margin:'Profit margin',
-      addExp:'Add an expense',amtP:'Amount',noteP:'Note (optional)',expList:"This month's expenses",yearly:'Yearly budget',incL:'Income',expL:'Expenses',yTotal:'Year to date',
+      addExp:'Add an expense',amtP:'Amount',noteP:'Note (optional)',expList:"This month's expenses",yearly:'Yearly budget',incL:'Income',expL:'Expenses',yTotal:'Year to date',vatNo:'No VAT',vatYes:'5% VAT',
       del:'Delete',mBiz:'Nursery and invoice details',mBizS:'Name, tax number and contact details',bizTitle:'Nursery and invoice details',nameArP:'Nursery name (Arabic)',nameEnP:'Nursery name (English)',trnP:'Tax registration number (15 digits)',addrArP:'Address (Arabic)',addrEnP:'Address (English)',phoneBizP:'Contact number (shown at the bottom of the invoice)',vatTuL:'VAT on monthly tuition',vatBusL:'VAT on bus fee',v0:'0% (zero-rated)',v5:'5% (standard rate)',vEx:'Exempt from VAT',bizSave:'Save',bizSaved:'✔ Saved',trnErr:'The tax number must be 15 digits',bizNote:'Note: these rates are settings for illustration. The VAT treatment of nursery fees and bus fees depends on your nursery licence and the type of service, so check with a tax advisor or the Federal Tax Authority. The UAE tax invoice layout appears when the currency is AED.',
       invTitle:'Tax invoice',recTitle:'Payment receipt',
       newPwP:'New password (at least 6 characters)',confPwP:'Confirm new password',changePw:'Change password',pwMismatch:"Passwords don't match",pwShort:'Must be at least 6 characters',pwOk:'✔ Password changed',pwErr:'Something went wrong, please try again',
@@ -241,7 +241,7 @@
   function money(v){return Math.round(v).toLocaleString(S.lang==='ar'?'ar-EG':'en-US')+' '+S.cur}
   function dfmt(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString(S.lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',year:'numeric'})}
   function due(k){return num(k.fee)+(k.bus?num(k.busFee):0)}
-  function paymentsForKid(kidId){return S.payments.filter(function(p){return p.kidId===kidId})}
+  function paymentsForKid(kidId){return S.payments.filter(function(p){return p.kidId===kidId&&!p.cancelled})}
   function paidThisMonth(kidId){var mk=monthKey();return paymentsForKid(kidId).filter(function(p){return String(p.date).slice(0,7)===mk})[0]}
   function payTotal(p){return num(p.fee)+num(p.busFee)+num(p.reg)}
   function wa(phone,text){return 'https://wa.me/'+String(phone).replace(/\D/g,'')+'?text='+encodeURIComponent(text)}
@@ -251,7 +251,7 @@
 
   function totals(){
     var mk=monthKey(),c=0,d=0,unp=0,pres=0,newN=0,newL=[];
-    S.payments.forEach(function(p){if(String(p.date).slice(0,7)===mk)c+=payTotal(p)});
+    S.payments.forEach(function(p){if(!p.cancelled&&String(p.date).slice(0,7)===mk)c+=payTotal(p)});
     S.kids.forEach(function(k){var t=due(k);d+=t;if(!paidThisMonth(k.id))unp++;if(k.present)pres++;if(String(k.joined).slice(0,7)===mk){newN++;newL.push(k)}});
     var ex=0;S.exp.forEach(function(e){if(String(e.date).slice(0,7)===mk)ex+=num(e.amount)});
     return {collected:c,due:d,unpaid:unp,present:pres,absent:S.kids.length-pres,newN:newN,newL:newL,exp:ex,profit:c-ex};
@@ -272,9 +272,9 @@
   }
   var EXP_COLS={
     kids:[{label:'Name',get:function(k){return pick(k.name,'en')}},{label:'Class',get:function(k){return pick(k.cls,'en')}},{label:'Parent',get:function(k){return pick(k.parent,'en')}},{label:'Mother phone',get:function(k){return k.motherPhone||''}},{label:'Father phone',get:function(k){return k.fatherPhone||''}},{label:'Email',get:function(k){return k.email||''}},{label:'Area',get:function(k){return pick(k.area,'en')}},{label:'Pickup person',get:function(k){return pick(k.pickup,'en')}},{label:'Bus',get:function(k){return k.bus?'Yes':'No'}},{label:'Bus fee',get:function(k){return num(k.busFee)}},{label:'Monthly fee',get:function(k){return num(k.fee)}},{label:'Joined',get:function(k){return k.joined||''}}],
-    fees:[{label:'Receipt No.',get:function(p){return p.rcpt}},{label:'Date',get:function(p){return p.date}},{label:'Child',get:function(p){var k=byId(S.kids,p.kidId);return k?pick(k.name,'en'):''}},{label:'Fees period from',get:function(p){return p.from||''}},{label:'Fees period to',get:function(p){return p.to||''}},{label:'Monthly fee',get:function(p){return num(p.fee)}},{label:'Transport fee',get:function(p){return num(p.busFee)}},{label:'Registration fee',get:function(p){return num(p.reg)}},{label:'Total',get:function(p){return payTotal(p)}},{label:'Payment method',get:function(p){return p.method}}],
+    fees:[{label:'Receipt No.',get:function(p){return p.rcpt}},{label:'Date',get:function(p){return p.date}},{label:'Child',get:function(p){var k=byId(S.kids,p.kidId);return k?pick(k.name,'en'):''}},{label:'Fees period from',get:function(p){return p.from||''}},{label:'Fees period to',get:function(p){return p.to||''}},{label:'Monthly fee',get:function(p){return num(p.fee)}},{label:'Transport fee',get:function(p){return num(p.busFee)}},{label:'Registration fee',get:function(p){return num(p.reg)}},{label:'Total',get:function(p){return payTotal(p)}},{label:'Payment method',get:function(p){return p.method}},{label:'Status',get:function(p){return p.cancelled?'Cancelled':'Active'}},{label:'Cancellation reason',get:function(p){return p.cancelReason||''}}],
     staff:[{label:'Name',get:function(s){return pick(s.name,'en')}},{label:'Role',get:function(s){return pick(s.role,'en')}},{label:'Present today',get:function(s){return s.present?'Yes':'No'}},{label:'Absence days (this month)',get:function(s){return s.abs}}],
-    exp:[{label:'Date',get:function(e){return e.date}},{label:'Category',get:function(e){return catNameEn(e.cat)}},{label:'Note',get:function(e){return e.note||''}},{label:'Amount',get:function(e){return num(e.amount)}}]
+    exp:[{label:'Date',get:function(e){return e.date}},{label:'Category',get:function(e){return catNameEn(e.cat)}},{label:'Note',get:function(e){return e.note||''}},{label:'VAT',get:function(e){return e.vat?'5%':'No'}},{label:'Amount',get:function(e){return num(e.amount)}}]
   };
   function catNameEn(c){return (CATS[c]||['—','—'])[1]}
   function exportBtns(type,rows,titleAr,titleEn){
@@ -376,8 +376,14 @@
     if(!S.payments.length) h+='<div class="empty">—</div>';
     S.payments.slice(0,20).forEach(function(p){
       var k=byId(S.kids,p.kidId);
-      h+='<div class="item"><div class="av">'+(k?initial(k.name):'?')+'</div><div class="info"><div class="nm">'+esc(k?nm(k.name):'—')+'</div><div class="sm">'+dfmt(p.date)+' · '+l.receiptNoShort+' '+p.rcpt+' · '+money(payTotal(p))+'</div></div>'+
-        '<button class="x" title="'+l.del+'" aria-label="'+l.del+'" data-act="delPayment" data-id="'+p.id+'">✕</button></div>';
+      if(p.cancelled){
+        h+='<div class="item"><div class="av">'+(k?initial(k.name):'?')+'</div><div class="info"><div class="nm" style="text-decoration:line-through;color:var(--muted)">'+esc(k?nm(k.name):'—')+'</div><div class="sm">'+dfmt(p.date)+' · '+l.receiptNoShort+' '+p.rcpt+' · '+money(payTotal(p))+'</div><div class="sm" style="color:var(--red)">'+l.cancelledL+(p.cancelReason?' — '+esc(p.cancelReason):'')+'</div></div>'+
+          '<button class="btn g s" data-act="restorePayment" data-id="'+p.id+'">'+l.restoreL+'</button></div>';
+      }else{
+        h+='<div class="item"><div class="av">'+(k?initial(k.name):'?')+'</div><div class="info"><div class="nm">'+esc(k?nm(k.name):'—')+'</div><div class="sm">'+dfmt(p.date)+' · '+l.receiptNoShort+' '+p.rcpt+' · '+money(payTotal(p))+'</div></div>'+
+          '<button class="btn o s" data-act="receipt" data-id="'+p.id+'">🧾</button>'+
+          '<button class="x" title="'+l.cancelL+'" aria-label="'+l.cancelL+'" data-act="cancelPayment" data-id="'+p.id+'">🚫</button></div>';
+      }
     });
     return h+'</div>';
   }
@@ -431,14 +437,37 @@
   function pick(o,lg){return typeof o==='string'?o:((o&&(o[lg]||o.ar||o.en))||'')}
   function invLines(k,p){
     var b=S.biz,dt=p.date,mo=MON[new Date(dt+'T00:00:00').getMonth()],yr=dt.slice(0,4);
+    var period=(p.from&&p.to)?(' ('+d8(p.from)+' → '+d8(p.to)+')'):(' - '+mo[0]+' '+yr);
+    var periodEn=(p.from&&p.to)?(' ('+d8(p.from)+' → '+d8(p.to)+')'):(' - '+mo[1]+' '+yr);
     function rt(v){return v==='ex'?'ex':num(v)}
     function mkl(gross,rate,ar,en){gross=Math.round(gross*100)/100;var net=rate==='ex'?gross:Math.round(gross/(1+rate/100)*100)/100;return {ar:ar,en:en,gross:gross,rate:rate,net:net,vat:Math.round((gross-net)*100)/100}}
     var arr=[];
-    if(num(p.fee)>0)arr.push(mkl(num(p.fee),rt(b.vatTuition),'الرسوم الشهرية - '+mo[0]+' '+yr,'Monthly tuition fee - '+mo[1]+' '+yr));
-    if(num(p.busFee)>0)arr.push(mkl(num(p.busFee),rt(b.vatBus),'رسوم الباص - '+mo[0]+' '+yr,'School bus fee - '+mo[1]+' '+yr));
+    if(num(p.fee)>0)arr.push(mkl(num(p.fee),rt(b.vatTuition),'الرسوم الشهرية'+period,'Monthly tuition fee'+periodEn));
+    if(num(p.busFee)>0)arr.push(mkl(num(p.busFee),rt(b.vatBus),'رسوم الباص'+period,'School bus fee'+periodEn));
     if(num(p.reg)>0)arr.push(mkl(num(p.reg),rt(b.vatTuition),'رسوم التسجيل','Registration fee'));
     return arr;
   }
+  var ONES=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  var TENS=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function numWordsEn(n){
+    n=Math.round(n);
+    if(n===0)return 'Zero';
+    function chunk(x){
+      var s='';
+      if(x>=100){s+=ONES[Math.floor(x/100)]+' Hundred ';x%=100}
+      if(x>=20){s+=TENS[Math.floor(x/10)]+' ';x%=10}
+      if(x>0)s+=ONES[x]+' ';
+      return s;
+    }
+    var parts=[];
+    var millions=Math.floor(n/1000000);n%=1000000;
+    var thousands=Math.floor(n/1000);n%=1000;
+    if(millions)parts.push(chunk(millions)+'Million');
+    if(thousands)parts.push(chunk(thousands)+'Thousand');
+    if(n)parts.push(chunk(n));
+    return parts.join(' ').trim();
+  }
+  function amountInWords(total){return numWordsEn(total)+' Dirhams Only'}
   function drawInv(ctx,k,p,tax){
     var W=1080,P=60,b=S.biz,ls=invLines(k,p),cur=S.cur,dt=d8(p.date);
     var FF='Cairo,"Segoe UI",Tahoma,Arial,sans-serif',isAr=S.lang==='ar',dir=isAr?'rtl':'ltr',start=isAr?'right':'left';
@@ -481,6 +510,7 @@
     });
     y+=26;
     var tbx=W-P-580;
+    if(!isAr){T('Amount in words: '+amountInWords(tg),P,y+34,{a:'left',w:600,s:19,c:'#5d6385',max:tbx-P-20});}
     if(tax){
       T(isAr?'الإجمالي قبل الضريبة':'Total before VAT',tbx+20,y+34,{a:'left',w:600,s:22,c:'#5d6385'});
       T(n2(tn)+' '+cur,tbx+560,y+34,{a:'right',w:700,s:25});
@@ -601,6 +631,8 @@
     '<div class="panel"><form class="add" id="addExp"><strong>'+l.addExp+'</strong>'+
       '<div class="two"><select name="cat">'+Object.keys(CATS).map(function(c){return '<option value="'+c+'">'+catName(c)+'</option>'}).join('')+'</select>'+
       '<input name="amount" type="number" min="0" placeholder="'+esc(l.amtP)+'" required></div>'+
+      '<div class="two"><input name="date" type="date" value="'+todayIso()+'" required>'+
+      '<select name="vat"><option value="0">'+l.vatNo+'</option><option value="5">'+l.vatYes+'</option></select></div>'+
       '<input name="note" placeholder="'+esc(l.noteP)+'" maxlength="60">'+
       '<button class="btn p full" type="submit">'+l.add+'</button></form></div>'+
     '<div class="panel"><h3>'+l.expList+'</h3>';
@@ -648,7 +680,20 @@
     if(act==='toggleKid'){var k=byId(S.kids,id);if(k){var nv=!k.present;k.present=nv;render();sb.from('children').update({present:nv}).eq('id',id).then(function(r){if(r.error){k.present=!nv;render()}})}return}
     if(act==='delKid'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.kids=S.kids.filter(function(x){return x.id!==id});render();sb.from('children').delete().eq('id',id).then(function(r){if(r.error){alert(L().loadErr);loadAll().then(render)}});return}
     if(act==='addPayment'){openAddPayment(id||null);return}
-    if(act==='delPayment'){if(!confirm(S.lang==='ar'?'تأكيد الحذف؟':'Confirm delete?'))return;S.payments=S.payments.filter(function(x){return x.id!==id});render();sb.from('payments').delete().eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});return}
+    if(act==='cancelPayment'){
+      var reason=prompt(L().cancelPrompt,'');if(reason===null)return;
+      var p=byId(S.payments,id);if(!p)return;
+      var now=new Date().toISOString();
+      p.cancelled=true;p.cancelReason=reason;p.cancelledAt=now;render();
+      sb.from('payments').update({cancelled:true,cancel_reason:reason,cancelled_at:now}).eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});
+      return;
+    }
+    if(act==='restorePayment'){
+      var p2=byId(S.payments,id);if(!p2)return;
+      p2.cancelled=false;p2.cancelReason=null;p2.cancelledAt=null;render();
+      sb.from('payments').update({cancelled:false,cancel_reason:null,cancelled_at:null}).eq('id',id).then(function(r){if(r.error){loadAll().then(render)}});
+      return;
+    }
     if(act==='receipt'){showReceipt(id);return}
     if(act==='sendRc'){var pp=byId(S.payments,id);if(pp){var kk=byId(S.kids,pp.kidId);if(kk){var target=b.dataset.who==='mother'?kk.motherPhone:kk.fatherPhone;if(target){buildInvoice(kk,pp).then(function(r){r.phone=target;shareRecord(r)})}}}return}
     if(act==='toggleStaff'){var s=byId(S.staff,id);if(s){var np=!s.present,na=Math.max(0,s.abs+(np?-1:1));s.present=np;s.abs=na;render();sb.from('staff').update({present:np,absence_days:na}).eq('id',id).then(function(r){if(r.error){loadAll().then(render)}})}return}
@@ -678,7 +723,7 @@
       return;
     }
     if(f.id==='addExp'){
-      var erow={date:todayIso(),category:f.elements.cat.value,note:d('note'),amount:num(d('amount'))};
+      var erow={date:d('date')||todayIso(),category:f.elements.cat.value,note:d('note'),amount:num(d('amount')),vat:f.elements.vat.value==='5'};
       sb.from('expenses').insert(erow).select().single().then(function(r){
         if(r.error){alert(L().loadErr);return}
         S.exp.push(mapExp(r.data));render();
@@ -712,9 +757,9 @@
   /* ================= mapping DB rows <-> app objects ================= */
   function mapKid(r){return {id:r.id,name:r.name,cls:r.class,parent:r.parent_name,motherPhone:r.mother_phone,fatherPhone:r.father_phone,email:r.email,area:r.area,pickup:r.pickup_person,fee:r.fee,bus:r.bus,busFee:r.bus_fee,paid:r.paid,paidDate:r.paid_date,rcpt:r.receipt_no,present:r.present,joined:r.joined_at}}
   function mapStaff(r){return {id:r.id,name:r.name,role:r.role,present:r.present,abs:r.absence_days}}
-  function mapExp(r){return {id:r.id,date:r.date,cat:r.category,note:r.note,amount:r.amount}}
+  function mapExp(r){return {id:r.id,date:r.date,cat:r.category,note:r.note,amount:r.amount,vat:!!r.vat}}
   function mapBiz(r){return {nameAr:r.name_ar,nameEn:r.name_en,trn:r.trn,addrAr:r.address_ar,addrEn:r.address_en,phone:r.phone||'',vatTuition:r.vat_tuition,vatBus:r.vat_bus}}
-  function mapPayment(r){return {id:r.id,kidId:r.kid_id,rcpt:r.receipt_no,date:r.payment_date,from:r.fees_from,to:r.fees_to,fee:r.monthly_fee,busFee:r.transport_fee,reg:r.registration_fee,method:r.method}}
+  function mapPayment(r){return {id:r.id,kidId:r.kid_id,rcpt:r.receipt_no,date:r.payment_date,from:r.fees_from,to:r.fees_to,fee:r.monthly_fee,busFee:r.transport_fee,reg:r.registration_fee,method:r.method,cancelled:!!r.cancelled,cancelReason:r.cancel_reason,cancelledAt:r.cancelled_at}}
   function save_noop(){}
 
   /* ================= load data from Supabase ================= */
